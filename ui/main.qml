@@ -1,8 +1,9 @@
-import QtQuick 2.11
-import QtQuick.Window 2.2
-import QtQuick.Controls 2.2
-import QtQuick.Layouts 1.4
-import QtQuick.Controls 2.15
+import QtQuick 
+import QtQuick.Window 
+import QtQuick.Controls 
+import QtQuick.Layouts 
+import QtQuick.Controls 
+// import QtQuick.Controls.Material
 import QtQuick.Dialogs 
 
 ApplicationWindow {
@@ -19,6 +20,12 @@ ApplicationWindow {
         height: parent.height
         color: "white"
 
+        Component.onCompleted: {
+            // Preload the ComboBox popup
+            projectTypeComboBox.popup.visible = true
+            projectTypeComboBox.popup.visible = false
+        }
+
         Column {
             anchors {
                 centerIn: parent
@@ -32,6 +39,7 @@ ApplicationWindow {
                     width: 150
                 }
                 TextField {
+                    id: projectNameTextField
                     placeholderText: qsTr("Enter a project name")
                     width: 150
                 }
@@ -46,13 +54,13 @@ ApplicationWindow {
                 TextField {
                     id: projectPathTextField
                     placeholderText: qsTr("Enter directory to place your project")
-                    width: 150
+                    width: 300
                 }
                 FolderDialog {
                     id: projectPathFolderDialog
                     title: "Select Project Path"
                     onAccepted: {
-                        projectPathTextField.text = selectedFolder;
+                        projectPathTextField.text = String(selectedFolder).replace("file:///", "");
                     }
                 }
                 Button {
@@ -78,6 +86,27 @@ ApplicationWindow {
                     model: ["VFX", "TV EPISODIC", "CG ANIMATION", "CG ANIMATION EPISODIC", "GAME"]
                 }
             }
+
+            Row {
+                Button {
+                    text: qsTr("Create")
+                    onClicked: {
+                        if (projectNameTextField.text === "" || projectPathTextField.text === ""){
+                            errorMessageDialog.informativeText = qsTr("Project Name and Path cannot be empty!");
+                            errorMessageDialog.open();
+                        } else{
+                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText)
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    MessageDialog {
+        id: errorMessageDialog
+        title: "Error"
+        informativeText: ""
+        buttons: MessageDialog.Ok
     }
 }
