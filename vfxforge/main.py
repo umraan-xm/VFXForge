@@ -5,10 +5,17 @@ import sys
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+from core.project_loader import ProjectStructureLoader, JSONProjectStructureSource
+
 
 class Backend(qtc.QObject):
     def __init__(self):
         super().__init__()
+        self.project_structure_loader = ProjectStructureLoader(JSONProjectStructureSource("database/project_structure.json"))
+
+    @qtc.pyqtProperty('QStringList', constant=True)
+    def projectTypes(self):
+        return self.project_structure_loader.get_project_types()
 
     @qtc.pyqtSlot(str, str, str)
     def createProject(self, project_path, project_name, project_type):
@@ -26,11 +33,6 @@ class Backend(qtc.QObject):
         print(f"Project '{project_name}' created successfully at {full_project_path}.")
 
         
-
-
-
-
-
 def main():
     app = qtg.QGuiApplication(sys.argv)
 

@@ -83,7 +83,7 @@ ApplicationWindow {
                     id: projectTypeComboBox
                     width: 200
                     focusPolicy: Qt.NoFocus
-                    model: ["VFX", "TV EPISODIC", "CG ANIMATION", "CG ANIMATION EPISODIC", "GAME"]
+                    model: backend.projectTypes
                 }
             }
 
