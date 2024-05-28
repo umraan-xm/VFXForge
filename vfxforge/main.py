@@ -3,6 +3,7 @@ from PyQt6 import QtGui as qtg
 from PyQt6 import QtQml as qml
 import sys
 import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Backend(qtc.QObject):
