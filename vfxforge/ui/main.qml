@@ -4,7 +4,8 @@ import QtQuick.Controls
 import QtQuick.Layouts 
 import QtQuick.Controls 
 // import QtQuick.Controls.Material
-import QtQuick.Dialogs 
+import QtQuick.Dialogs
+import QtQml.Models 
 
 ApplicationWindow {
     id: root
@@ -58,7 +59,7 @@ ApplicationWindow {
                 }
                 FolderDialog {
                     id: projectPathFolderDialog
-                    title: "Select Project Path"
+                    title: qsTr("Select Project Path")
                     onAccepted: {
                         projectPathTextField.text = String(selectedFolder).replace("file:///", "");
                     }
@@ -84,6 +85,90 @@ ApplicationWindow {
                     width: 200
                     focusPolicy: Qt.NoFocus
                     model: backend.projectTypes
+                }
+            }
+
+            ToolSeparator {
+                orientation: Qt.Horizontal
+                width: parent.width
+            }
+
+            Row {
+                width: parent.width
+                Column {
+                    id: assetSectionColumn
+                    width: parent.width
+                    
+                    Row {
+                        spacing: 2
+
+                        Button {
+                            id: addAssetButton
+                            text: "+"
+                            height: 30
+                            width: 30
+                            onClicked: {
+                                assetListView.model.append({"name": "", "type": ""})
+                            }
+                        }
+
+                        Button {
+                            text: "-"
+                            height: 30
+                            width: 30
+                            onClicked: {
+                                if(assetListView.model.count > 0){
+                                    assetListView.model.remove(assetListView.model.count - 1)
+                                }
+                            } 
+                        }
+                    }
+
+                    Row {
+                        
+                        ScrollView {
+                            width: assetSectionColumn.width
+                            height: 150
+                            clip: true
+                            
+                            ListView {
+                                id: assetListView
+                                model: ListModel {}
+                                spacing: 20
+
+                                delegate: Column {
+
+                                    Row {
+                                        spacing: 10
+
+                                        Text {
+                                            text: qsTr("Asset Type")
+                                            width: 80
+                                        }
+
+                                        ComboBox {
+                                            width: 150
+                                            model: ["Character", "Environment", "Prop"]
+                                        }
+                                    }
+
+                                    Row {
+                                        spacing: 10
+
+                                        Text {
+                                            text: qsTr("Asset Name")
+                                            width: 80
+                                        }
+
+                                        TextField {
+                                            placeholderText: qsTr("Enter asset name")
+                                            width: 150
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

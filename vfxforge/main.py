@@ -21,7 +21,7 @@ class Backend(qtc.QObject):
     def createProject(self, project_path, project_name, project_type):
         print(f"Creating project at {project_path} with name {project_name} and type {project_type}")
 
-        subdirectories = ["asset", "sequence", "IO", "development", "pipeline", "rnd"]
+        subdirectories = self.project_structure_loader.get_subdirectories(project_type=project_type)
 
         full_project_path = os.path.join(project_path, project_name)
 
