@@ -20,6 +20,10 @@ class Backend(qtc.QObject):
     @qtc.pyqtProperty('QStringList', constant=True)
     def projectTypes(self):
         return self.settings.get_project_types()
+    
+    @qtc.pyqtProperty('QStringList', constant=True)
+    def assetTypes(self):
+        return self.settings.get_asset_types()
 
     @qtc.pyqtSlot(str, str, str)
     def createProject(self, project_path, project_name, project_type):

@@ -148,7 +148,7 @@ ApplicationWindow {
 
                                         ComboBox {
                                             width: 150
-                                            model: ["Character", "Environment", "Prop"]
+                                            model: backend.assetTypes
                                         }
                                     }
 

@@ -25,7 +25,10 @@ class Settings:
         self._settings = self._source.load_settings()
  
     def get_project_types(self) -> List[str]:
-        return list(self._settings["base_dirs"].keys())
+        return list(self._settings.get("base_dirs").keys())
+    
+    def get_asset_types(self) -> List[str]:
+        return list(self._settings.get("asset_types"))
         
     def get_project_base_dirs(self, project_type) -> List[str]:
-        return self._settings["base_dirs"].get(project_type, [])
+        return self._settings.get("base_dirs").get(project_type, [])
