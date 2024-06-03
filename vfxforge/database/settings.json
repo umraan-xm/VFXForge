@@ -1,0 +1,6 @@
+{
+    "base_dirs": {
+        "VFX": ["asset", "sequence", "IO", "development", "pipeline", "rnd"],
+        "TV_EPISODIC": ["asset", "episode", "IO", "development", "pipeline", "rnd"]
+    }
+}
