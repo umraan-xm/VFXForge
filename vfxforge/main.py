@@ -2,13 +2,18 @@ from PyQt6 import QtCore as qtc
 from PyQt6 import QtGui as qtg
 from PyQt6 import QtQml as qml
 import sys
+
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+import logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
+)
+logger = logging.getLogger(__name__)
+
 from core.project_builder import ProjectBuilder
 from core.settings import Settings, JSONSettingsSource
-
-
 
 
 class Backend(qtc.QObject):
@@ -27,7 +32,7 @@ class Backend(qtc.QObject):
 
     @qtc.pyqtSlot(str, str, str)
     def createProject(self, project_path, project_name, project_type):
-        print(f"Creating project at {project_path} with name {project_name} and type {project_type}")
+        logger.info(f"Creating project at {project_path} with name {project_name} and type {project_type}")
 
         if not self.project_builder:
             self.project_builder = ProjectBuilder(name=project_name, path=project_path, project_type=project_type)
@@ -36,7 +41,7 @@ class Backend(qtc.QObject):
 
         self.project_builder.build_project(base_dirs=base_dirs)
 
-        print(f"Project '{project_name}' created successfully at {self.project_builder.path}.")
+        logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")
 
         
 def main():

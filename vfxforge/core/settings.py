@@ -3,6 +3,9 @@ from typing import List
 from abc import ABC, abstractmethod
 import json
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class SettingsSource(ABC):
     @abstractmethod
@@ -15,6 +18,8 @@ class JSONSettingsSource(SettingsSource):
         self.json_file = json_file
 
     def load_settings(self) -> dict:
+        logger.debug(f"Retrieving settings via JSON file: {self.json_file}")
+
         with open(self.json_file, 'r') as file:
             return json.load(file)
 
