@@ -1,0 +1,1 @@
+JSON_SETTINGS_FILEPATH = "database/settings.json"

@@ -3,5 +3,30 @@
         "VFX": ["asset", "sequence", "IO", "development", "pipeline", "rnd"],
         "TV_EPISODIC": ["asset", "episode", "IO", "development", "pipeline", "rnd"]
     },
-    "asset_types": ["Character", "Crowd", "Creature", "Environment", "Prop", "Vehicle"]
+    "asset_types": {
+        "Character": {
+            "subtypes": ["body", "face", "costume"],
+            "dir_name": "chr"
+        },
+        "Crowd": {
+            "subtypes": [],
+            "dir_name": "crd"
+        },
+        "Creature": {
+            "subtypes": [],
+            "dir_name": "crt"
+        },
+        "Environment": {
+            "subtypes": [],
+            "dir_name": "evr"
+        },
+        "Prop": {
+            "subtypes": [],
+            "dir_name": "prp"
+        },
+        "Vehicle": {
+            "subtypes": [],
+            "dir_name": "veh"
+        }
+    }
 }

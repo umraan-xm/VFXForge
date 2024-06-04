@@ -13,14 +13,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 from core.project_builder import ProjectBuilder
-from core.settings import Settings, JSONSettingsSource
+from settings import JSONSettings
+import constants
 
 
 class Backend(qtc.QObject):
     def __init__(self):
         super().__init__()
         self.project_builder = None
-        self.settings = Settings(source=JSONSettingsSource(json_file="database/settings.json"))
+        self.settings = JSONSettings(filepath=constants.JSON_SETTINGS_FILEPATH)
 
     @qtc.pyqtProperty('QStringList', constant=True)
     def projectTypes(self):
