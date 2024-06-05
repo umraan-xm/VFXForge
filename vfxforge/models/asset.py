@@ -31,11 +31,10 @@ class AssetListModel(qtc.QAbstractListModel):
         
         if role == AssetListModel.NameRole:
             return asset.name
-            # return asset['name']
 
         elif role == AssetListModel.TypeRole:
             return asset.type
-            # return asset['type']
+           
         
     def setData(self, index, value, role=qtc.Qt.ItemDataRole.EditRole):
         if not index.isValid():
@@ -45,10 +44,10 @@ class AssetListModel(qtc.QAbstractListModel):
         
         if role == AssetListModel.NameRole:
             asset.name = value
-            # asset['name'] = value
+
         elif role == AssetListModel.TypeRole:
             asset.type = value
-            # asset['type'] = value
+           
         else:
             return False
 
@@ -64,12 +63,18 @@ class AssetListModel(qtc.QAbstractListModel):
     @qtc.pyqtProperty(int)
     def count(self) -> int:
         return self.rowCount()
+    
+    @qtc.pyqtProperty(bool)
+    def isValid(self) -> bool:
+        for asset in self._assets:
+            if not asset.name.strip():
+                return False
+        return True
 
     @qtc.pyqtSlot(str, str)
     def add(self, name: str, asset_type: str):
         self.beginInsertRows(qtc.QModelIndex(), self.rowCount(), self.rowCount())
 
-        # self._assets.append({"name": name, "type": asset_type})
         self._assets.append(Asset(name, asset_type))
         
         self.endInsertRows()

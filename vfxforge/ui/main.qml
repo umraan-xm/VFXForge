@@ -107,25 +107,27 @@ ApplicationWindow {
                     Row {
                         spacing: 2
 
+                        property int buttonSize: 25
+
                         Button {
-                            id: addAssetButton
+                            height: parent.buttonSize
+                            width: height
+
                             text: "+"
-                            height: 30
-                            width: 30
+
                             onClicked: {
-                                // assetListView.model.append({"name": "", "type": ""})
                                 assetListView.model.add("", "")
                             }
                         }
 
                         Button {
+                            height: parent.buttonSize
+                            width: height
+
                             text: "-"
-                            height: 30
-                            width: 30
+
                             onClicked: {
-                                
                                 if(assetListView.model.count > 0){
-                                    // assetListView.model.remove(assetListView.model.count - 1)
                                     assetListView.model.pop()
                                 }
                             } 
@@ -155,16 +157,19 @@ ApplicationWindow {
                                         spacing: 10
 
                                         Text {
-                                            text: qsTr("Asset Type")
                                             width: 80
+
+                                            text: qsTr("Asset Type")
                                         }
 
                                         ComboBox {
                                             id: assetTypeComboBox
+
                                             width: 150
+
                                             model: backend.assetTypes
                                             onCurrentTextChanged: {
-                                                // assetListView.model.set(index, { "type": currentText, "name": assetNameTextField.text })
+                                                // Set the roles defined in AssetListModel
                                                 name = assetNameTextField.text
                                                 type = currentText
                                             }
@@ -176,16 +181,20 @@ ApplicationWindow {
                                         spacing: 10
 
                                         Text {
-                                            text: qsTr("Asset Name")
                                             width: 80
+
+                                            text: qsTr("Asset Name")
                                         }
 
                                         TextField {
                                             id: assetNameTextField
-                                            placeholderText: qsTr("Enter asset name")
+                                            
                                             width: 150
+
+                                            placeholderText: qsTr("Enter asset name")
+                                            validator: RegularExpressionValidator { regularExpression: /[a-zA-Z]*/}
                                             onEditingFinished: {
-                                                // assetListView.model.set(index, {"name": text, "type": assetTypeComboBox.currentText})
+                                                // Set the roles defined in AssetListModel
                                                 name = text
                                                 type = assetTypeComboBox.currentText
                                             }
@@ -205,12 +214,10 @@ ApplicationWindow {
                         if (projectNameTextField.text === "" || projectPathTextField.text === ""){
                             errorMessageDialog.informativeText = qsTr("Project Name and Path cannot be empty!");
                             errorMessageDialog.open();
+                        } else if (!assetListView.model.isValid){
+                            errorMessageDialog.informativeText = qsTr("Please enter asset names");
+                            errorMessageDialog.open();
                         } else{
-                            // var assets = [];
-                            // for (var i = 0; i < assetListView.model.count; i++) {
-                            //     var asset = assetListView.model.get(i);
-                            //     assets.push(asset);
-                            // }
                             backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.assets)
                         }
                     }
