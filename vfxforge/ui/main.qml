@@ -33,6 +33,7 @@ ApplicationWindow {
             }
             spacing: 20
 
+            // PROJECT NAME
             Row {
                 spacing: 10
                 Text {
@@ -46,6 +47,7 @@ ApplicationWindow {
                 }
             }
 
+            // PROJECT PATH
             Row {
                 spacing: 10
                 Text {
@@ -74,6 +76,7 @@ ApplicationWindow {
                 }
             }
 
+            // PROJECT TYPE
             Row {
                 spacing: 10
                 Text {
@@ -93,12 +96,14 @@ ApplicationWindow {
                 width: parent.width
             }
 
+            // ASSET SECTION
             Row {
                 width: parent.width
                 Column {
                     id: assetSectionColumn
                     width: parent.width
                     
+                    // ADD OR DELETE ASSET BUTTONS
                     Row {
                         spacing: 2
 
@@ -108,7 +113,8 @@ ApplicationWindow {
                             height: 30
                             width: 30
                             onClicked: {
-                                assetListView.model.append({"name": "", "type": ""})
+                                // assetListView.model.append({"name": "", "type": ""})
+                                assetListView.model.add("", "")
                             }
                         }
 
@@ -117,13 +123,16 @@ ApplicationWindow {
                             height: 30
                             width: 30
                             onClicked: {
+                                
                                 if(assetListView.model.count > 0){
-                                    assetListView.model.remove(assetListView.model.count - 1)
+                                    // assetListView.model.remove(assetListView.model.count - 1)
+                                    assetListView.model.pop()
                                 }
                             } 
                         }
                     }
 
+                    // DISPLAY ASSETS
                     Row {
                         
                         ScrollView {
@@ -133,11 +142,15 @@ ApplicationWindow {
                             
                             ListView {
                                 id: assetListView
-                                model: ListModel {}
+                                model: assetListModel
                                 spacing: 20
 
                                 delegate: Column {
-
+                                    Component.onCompleted: {
+                                        
+                                    }
+                                   
+                                    // ASSET TYPE
                                     Row {
                                         spacing: 10
 
@@ -147,11 +160,18 @@ ApplicationWindow {
                                         }
 
                                         ComboBox {
+                                            id: assetTypeComboBox
                                             width: 150
                                             model: backend.assetTypes
+                                            onCurrentTextChanged: {
+                                                // assetListView.model.set(index, { "type": currentText, "name": assetNameTextField.text })
+                                                name = assetNameTextField.text
+                                                type = currentText
+                                            }
                                         }
                                     }
 
+                                    // ASSET NAME
                                     Row {
                                         spacing: 10
 
@@ -161,8 +181,14 @@ ApplicationWindow {
                                         }
 
                                         TextField {
+                                            id: assetNameTextField
                                             placeholderText: qsTr("Enter asset name")
                                             width: 150
+                                            onEditingFinished: {
+                                                // assetListView.model.set(index, {"name": text, "type": assetTypeComboBox.currentText})
+                                                name = text
+                                                type = assetTypeComboBox.currentText
+                                            }
                                         }
                                     }
                                 }
@@ -180,7 +206,12 @@ ApplicationWindow {
                             errorMessageDialog.informativeText = qsTr("Project Name and Path cannot be empty!");
                             errorMessageDialog.open();
                         } else{
-                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText)
+                            // var assets = [];
+                            // for (var i = 0; i < assetListView.model.count; i++) {
+                            //     var asset = assetListView.model.get(i);
+                            //     assets.push(asset);
+                            // }
+                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.assets)
                         }
                     }
                 }
