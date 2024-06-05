@@ -40,12 +40,12 @@ class Backend(qtc.QObject):
     def createProject(self, project_path: str, project_name: str, project_type: str, assets: List[Asset]):
         logger.info(f"Creating project at {project_path} with name {project_name} and type {project_type}")
 
-        if not self.project_builder:
+        if not self.project_builder or not self.project_builder.matches(name=project_name, path=project_path):
             self.project_builder = ProjectBuilder(name=project_name, path=project_path, project_type=project_type)
 
-        base_dirs = self.settings.get_project_base_dirs(project_type=self.project_builder.project_type)
+            base_dirs = self.settings.get_project_base_dirs(project_type=self.project_builder.project_type)
 
-        self.project_builder.build_project(base_dirs=base_dirs)
+            self.project_builder.build_project(base_dirs=base_dirs)
 
         if assets:
             logger.info(f"Project contains {len(assets)} assets.")

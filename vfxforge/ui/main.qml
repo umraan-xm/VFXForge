@@ -105,13 +105,41 @@ ApplicationWindow {
                     
                     // ADD OR DELETE ASSET BUTTONS
                     Row {
-                        spacing: 2
+                        spacing: 0
 
-                        property int buttonSize: 25
+                        bottomPadding: 20
+                        
+                        property int sectionHeight: 25
+
+                        Text {
+                            width: 120
+                            anchors.verticalCenter: assetCountTextField.verticalCenter
+
+                            text: qsTr("Number of Assets")
+                        }
+
+                        TextField {
+                            id: assetCountTextField
+                            width: 40
+                            height: parent.sectionHeight - 2
+                            horizontalAlignment: TextInput.AlignLeft
+                            verticalAlignment: TextInput.AlignVCenter
+                            leftPadding: 5
+                            
+                            rightInset: -2
+                            
+
+                            validator: IntValidator {bottom: 1; top: 99;}
+                            text: String(1)
+
+                        }
 
                         Button {
-                            height: parent.buttonSize
+                            height: parent.sectionHeight
                             width: height
+                            anchors.verticalCenter: assetCountTextField.verticalCenter
+                            rightInset: -1
+                            
 
                             text: "+"
 
@@ -121,8 +149,12 @@ ApplicationWindow {
                         }
 
                         Button {
-                            height: parent.buttonSize
+                            height: parent.sectionHeight
                             width: height
+                            anchors.verticalCenter: assetCountTextField.verticalCenter
+                            leftInset: -2
+                            leftPadding: 1
+                           
 
                             text: "-"
 
@@ -131,6 +163,14 @@ ApplicationWindow {
                                     assetListView.model.pop()
                                 }
                             } 
+                        }
+
+                        Button {
+                            height: parent.sectionHeight
+                            width: 50
+                            anchors.verticalCenter: assetCountTextField.verticalCenter
+
+                            text: qsTr("Clear")
                         }
                     }
 

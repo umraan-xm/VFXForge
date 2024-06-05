@@ -12,6 +12,9 @@ class ProjectBuilder:
 
         self.asset_dir = 'asset'
 
+    def matches(self, name: str, path: str) -> bool:
+        return self.path == os.path.join(path, name)
+
     def build_project(self, base_dirs: List[str]):
         logger.debug(f"Creating Project Directories: {self.path}")
         os.makedirs(self.path, exist_ok=True)
