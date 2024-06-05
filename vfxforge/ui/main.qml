@@ -129,9 +129,19 @@ ApplicationWindow {
                             rightInset: -2
                             
 
-                            validator: IntValidator {bottom: 1; top: 99;}
-                            text: String(1)
+                            validator: IntValidator {bottom: 0; top: 99;}
+                            text: "1"
 
+                            Component.onCompleted: {
+                                assetListView.model.add("", "");
+                            }
+
+                            onTextEdited: {
+                                assetListView.model.clear()
+                                for(var i=0; i < Number(text); i++){
+                                    assetListView.model.add("", "");
+                                }
+                            }
                         }
 
                         Button {
@@ -145,6 +155,7 @@ ApplicationWindow {
 
                             onClicked: {
                                 assetListView.model.add("", "")
+                                assetCountTextField.text = String(Number(assetCountTextField.text) + 1)
                             }
                         }
 
@@ -161,16 +172,22 @@ ApplicationWindow {
                             onClicked: {
                                 if(assetListView.model.count > 0){
                                     assetListView.model.pop()
+                                    assetCountTextField.text = String(Number(assetCountTextField.text) - 1)
                                 }
                             } 
                         }
 
                         Button {
                             height: parent.sectionHeight
-                            width: 50
+                            width: 75
                             anchors.verticalCenter: assetCountTextField.verticalCenter
 
                             text: qsTr("Clear")
+
+                            onClicked: {
+                                assetListView.model.clear()
+                                assetCountTextField.text = 0
+                            }
                         }
                     }
 
@@ -188,9 +205,7 @@ ApplicationWindow {
                                 spacing: 20
 
                                 delegate: Column {
-                                    Component.onCompleted: {
-                                        
-                                    }
+                                    spacing: 5
                                    
                                     // ASSET TYPE
                                     Row {

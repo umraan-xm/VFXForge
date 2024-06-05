@@ -88,6 +88,14 @@ class AssetListModel(qtc.QAbstractListModel):
 
             self.endRemoveRows()
 
+    @qtc.pyqtSlot()
+    def clear(self):
+        self.beginRemoveRows(qtc.QModelIndex(), 0, self.rowCount() - 1)
+
+        self._assets.clear()
+
+        self.endRemoveRows()
+
     @qtc.pyqtProperty(list)
     def assets(self) -> List[Asset]:
         return self._assets
