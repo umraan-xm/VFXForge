@@ -1,6 +1,7 @@
 from PyQt6 import QtCore as qtc
 from PyQt6 import QtGui as qtg
 from PyQt6 import QtQml as qml
+
 import sys
 
 from typing import List
@@ -46,8 +47,14 @@ class Backend(qtc.QObject):
 
         self.project_builder.build_project(base_dirs=base_dirs)
 
-        for asset in assets:
-            print(asset)
+        if assets:
+            logger.info(f"Project contains {len(assets)} assets.")
+            for asset in assets:
+                logger.info(asset)
+
+                asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset.type)
+                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir)
+
 
         logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")
 

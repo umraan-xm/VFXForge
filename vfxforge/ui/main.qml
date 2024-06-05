@@ -87,7 +87,7 @@ ApplicationWindow {
                     id: projectTypeComboBox
                     width: 200
                     focusPolicy: Qt.NoFocus
-                    model: backend.projectTypes
+                    model: backend !== null ? backend.projectTypes : []
                 }
             }
 
@@ -167,7 +167,7 @@ ApplicationWindow {
 
                                             width: 150
 
-                                            model: backend.assetTypes
+                                            model: backend !== null ? backend.assetTypes : []
                                             onCurrentTextChanged: {
                                                 // Set the roles defined in AssetListModel
                                                 name = assetNameTextField.text
@@ -218,7 +218,7 @@ ApplicationWindow {
                             errorMessageDialog.informativeText = qsTr("Please enter asset names");
                             errorMessageDialog.open();
                         } else{
-                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.assets)
+                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.assets);
                         }
                     }
                 }

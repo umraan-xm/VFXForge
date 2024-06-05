@@ -17,6 +17,9 @@ class Settings(ABC):
     def get_asset_types(self) -> List[str]:
         pass
 
+    def get_asset_type_dir_name(self) -> str:
+        pass
+
     def get_asset_subtypes(self, asset_type: str) -> List[str]:
         pass
 
@@ -40,6 +43,9 @@ class JSONSettings(Settings):
     
     def get_asset_types(self) -> List[str]:
         return list(self._settings.get("asset_types"))
+    
+    def get_asset_type_dir_name(self, asset_type: str) -> str:
+        return self._settings.get("asset_types").get(asset_type).get("dir_name")
     
     def get_asset_subtypes(self, asset_type: str) -> List[str]:
         return self._settings.get("asset_types").get(asset_type).get("subtypes")
