@@ -1,9 +1,4 @@
-from PyQt6 import QtCore as qtc
-from PyQt6 import QtGui as qtg
-from PyQt6 import QtQml as qml
-
 import sys
-
 from typing import List
 
 import os
@@ -14,6 +9,10 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
 )
 logger = logging.getLogger(__name__)
+
+from PyQt6 import QtCore as qtc
+from PyQt6 import QtGui as qtg
+from PyQt6 import QtQml as qml
 
 from core.project_builder import ProjectBuilder
 from settings import JSONSettings
@@ -46,14 +45,16 @@ class Backend(qtc.QObject):
             base_dirs = self.settings.get_project_base_dirs(project_type=self.project_builder.project_type)
 
             self.project_builder.build_project(base_dirs=base_dirs)
-
+        
         if assets:
             logger.info(f"Project contains {len(assets)} assets.")
             for asset in assets:
                 logger.info(asset)
 
                 asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset.type)
-                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir)
+                subtypes = self.settings.get_asset_subtypes(asset_type=asset.type)
+
+                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir, subtypes=subtypes)
 
 
         logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")

@@ -7,6 +7,8 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQml.Models 
 
+import "./components"
+
 ApplicationWindow {
     id: root
     visible: true
@@ -19,7 +21,7 @@ ApplicationWindow {
     Rectangle {
         width: parent.width
         height: parent.height
-        color: "white"
+        // color: "white"
 
         Component.onCompleted: {
             // Preload the ComboBox popup
@@ -255,6 +257,16 @@ ApplicationWindow {
                                             }
                                         }
                                     }
+
+                                    Row {
+                                        Button {
+                                            text: qsTr("Edit Subtypes and Variants")
+
+                                            onClicked: {
+                                                subtypesEditorWindow.visible = true
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -279,6 +291,13 @@ ApplicationWindow {
                 }
             }
         }
+    }
+
+    SubtypesEditorWindow {
+        id: subtypesEditorWindow
+
+        x: root.x + root.width / 2 - width / 2
+        y: root.y + root.height / 2 - height / 2
     }
 
     MessageDialog {

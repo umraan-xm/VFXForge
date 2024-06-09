@@ -8,18 +8,23 @@ logger = logging.getLogger(__name__)
 
 
 class Settings(ABC):
+    @abstractmethod
     def get_project_base_dirs(self, project_type: str) -> List[str]:
         pass
 
+    @abstractmethod
     def get_project_types(self) -> List[str]:
         pass
 
+    @abstractmethod
     def get_asset_types(self) -> List[str]:
         pass
 
+    @abstractmethod
     def get_asset_type_dir_name(self) -> str:
         pass
 
+    @abstractmethod
     def get_asset_subtypes(self, asset_type: str) -> List[str]:
         pass
 
