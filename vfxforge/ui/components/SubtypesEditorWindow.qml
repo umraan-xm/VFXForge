@@ -7,10 +7,14 @@ import QtQml.Models
 
 Window {
     id: subtypesEditorWindow
-    width: 500
-    height: 300
+    width: 600
+    height: 350
     minimumWidth: 400
     minimumHeight: 200
+
+    property var assetsModel
+
+    property var subtypes: []
 
     title: qsTr("Edit subtypes and variants")
 
@@ -41,13 +45,27 @@ Window {
             Row {
                 ScrollView {
                     width: subtypesEditorWindow.width - 55
-                    height: subtypesEditorWindow.height - 100
+                    height: subtypesEditorWindow.height - 150
                     clip: true
-                    
+
                     ListView {
                         id: subtypesListView
                         
-                        model: ListModel {}
+                        model: ListModel {
+                            Component.onCompleted: {
+                                let subtypes = [
+                                    {
+                                        name: "",
+                                        variants: [
+                                            {
+                                                name: "",
+                                            }
+                                        ]
+                                    }
+                                ]
+                                append(subtypes)
+                            }
+                        }
 
                         spacing: 20
 
@@ -57,6 +75,10 @@ Window {
                                 TextField {
                                     id: subtypeNameTextField
                                     placeholderText: qsTr("Enter subtype name")
+
+                                    onTextEdited: {
+                                        subtypesListView.model.setProperty(index, "name", text);
+                                    }
                                 }
 
                                 Button {
@@ -81,7 +103,7 @@ Window {
 
                                     leftMargin: 25
 
-                                    model: ListModel {}
+                                    model: variants
 
                                     spacing: 2
 
@@ -91,12 +113,44 @@ Window {
                                             TextField {
                                                 id: subtypeNameTextField
                                                 placeholderText: qsTr("Enter Variant name")
+
+                                                onTextEdited: {
+                                                    variantListView.model.setProperty(index, "name", text);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            Row {
+                Button {
+                    id: saveSubtypesButton
+
+                    width: 100
+
+                    text: qsTr("Save")
+
+                    onClicked: {
+                        var subtypes = []
+                        for(var i=0; i<subtypesListView.model.count; i++){
+                            var subtype = subtypesListView.model.get(i)
+
+                            var variants = []
+                            for(var j=0; j<subtype["variants"].count; j++){
+                                variants.push(subtype["variants"].get(j)["name"])
+                            }
+                            
+                            subtypes.push({"name": subtype["name"], "variants": variants})
+                        }
+
+                        subtypesEditorWindow.subtypes = subtypes
+
+                        subtypesEditorWindow.close()
                     }
                 }
             }
