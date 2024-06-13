@@ -18,7 +18,7 @@ from core.project_builder import ProjectBuilder
 from settings import JSONSettings
 import constants
 
-from models.asset import QAssetListModel, QAsset
+from models.asset import QAssetListModel, QAsset, QAssetSubtypeListModel
 
 
 class Backend(qtc.QObject):
@@ -52,9 +52,12 @@ class Backend(qtc.QObject):
                 logger.info(asset)
 
                 asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset.type)
-                # subtypes = self.settings.get_asset_subtypes(asset_type=asset.type)
 
-                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir, subtypes=[])
+                subtypes = []
+                for subtype in asset.subtypes.items:
+                    subtypes.append((subtype.name, map(str, subtype.variants.items)))
+
+                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir, subtypes=subtypes)
 
 
         logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")

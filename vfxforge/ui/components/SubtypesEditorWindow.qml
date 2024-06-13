@@ -12,11 +12,12 @@ Window {
     minimumWidth: 400
     minimumHeight: 200
 
-    // property var assetsModel
+    property var currentAssetName
+    property var currentAssetType
 
     property var subtypesModel
 
-    title: qsTr("Edit subtypes and variants")
+    title: qsTr("Edit subtypes and variants for %1".arg(currentAssetName == null ? "" : currentAssetName))
 
     flags: Qt.Dialog
 
@@ -127,22 +128,6 @@ Window {
                     text: qsTr("Save")
 
                     onClicked: {
-                        // subtypesEditorWindow.subtypesModel = subtypesListView.model
-
-                        // console.log(subtypesListView.model)
-
-                        // var subtypes = subtypesListView.model.subtypes
-                        // for(var i=0; i<subtypesListView.model.count; i++){
-                        //     var subtype = subtypes[i]
-                        //     console.log(subtype.name)
-                        // }
-
-                        // var subtypes = subtypesEditorWindow.subtypesModel.subtypes
-                        // for(var i=0; i<subtypesListView.model.count; i++){
-                        //     var subtype = subtypes[i]
-                        //     console.log(subtype.name)
-                        // }
-
                         subtypesEditorWindow.close()
                     }
                 }

@@ -276,11 +276,6 @@ ApplicationWindow {
                                         id: subtypesEditorLoader
                                         active: false
 
-                                        // Emit a signal when the subtypes editor window is closed and passing the subtypes property defined in SubtypesEditorWindow.qml
-                                        // signal windowClosed(var editedSubtypes)
-
-                                        // property var currentSubtypes
-                                        
                                         sourceComponent: SubtypesEditorWindow {
                                             id: subtypesEditorWindow
                                             visible: true
@@ -288,32 +283,16 @@ ApplicationWindow {
                                             x: root.x + root.width / 2 - width / 2
                                             y: root.y + root.height / 2 - height / 2
 
-                                            // assetsModel: assetListModel
+                                            currentAssetName: name
+                                            currentAssetType: type
 
                                             subtypesModel: subtypes
 
                                             onClosing: {
                                                 subtypesEditorLoader.active = false
-                                                // subtypesEditorLoader.windowClosed(subtypes)
-
-                                                // var subtypes = subtypesModel.subtypes
-                                                // for(var i=0; i<subtypesModel.count; i++){
-                                                //     var subtype = subtypes[i]
-                                                //     console.log(subtype.name)
-                                                // }
                                             }
                                         }
                                     }
-
-                                    // 
-                                    // Connections {
-                                    //     target: subtypesEditorLoader
-                                    //     function onWindowClosed(editedSubtypes) {
-                                    //         console.log("Window closed with subtypes:", JSON.stringify(editedSubtypes))
-                                    //         subtypes = editedSubtypes
-                                            
-                                    //     }
-                                    // }
                                 }
                             }
                         }
