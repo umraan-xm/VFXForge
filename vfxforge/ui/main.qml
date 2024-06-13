@@ -135,13 +135,13 @@ ApplicationWindow {
                             text: "1"
 
                             Component.onCompleted: {
-                                assetListView.model.add("", "");
+                                assetListView.model.add();
                             }
 
                             onTextEdited: {
                                 assetListView.model.clear()
                                 for(var i=0; i < Number(text); i++){
-                                    assetListView.model.add("", "");
+                                    assetListView.model.add();
                                 }
                             }
                         }
@@ -156,7 +156,7 @@ ApplicationWindow {
                             text: "+"
 
                             onClicked: {
-                                assetListView.model.add("", "")
+                                assetListView.model.add()
                                 assetCountTextField.text = String(Number(assetCountTextField.text) + 1)
                             }
                         }
@@ -264,7 +264,6 @@ ApplicationWindow {
 
                                             onClicked: {
                                                 // subtypesEditorWindow.visible = true
-                                                console.log(JSON.stringify(assetListView.model.toDictList))
                                                 
                                                 subtypesEditorLoader.active = true
                                                 
@@ -278,9 +277,9 @@ ApplicationWindow {
                                         active: false
 
                                         // Emit a signal when the subtypes editor window is closed and passing the subtypes property defined in SubtypesEditorWindow.qml
-                                        signal windowClosed(var editedSubtypes)
+                                        // signal windowClosed(var editedSubtypes)
 
-                                        property var currentSubtypes
+                                        // property var currentSubtypes
                                         
                                         sourceComponent: SubtypesEditorWindow {
                                             id: subtypesEditorWindow
@@ -289,24 +288,32 @@ ApplicationWindow {
                                             x: root.x + root.width / 2 - width / 2
                                             y: root.y + root.height / 2 - height / 2
 
-                                            assetsModel: assetListModel
+                                            // assetsModel: assetListModel
+
+                                            subtypesModel: subtypes
 
                                             onClosing: {
                                                 subtypesEditorLoader.active = false
-                                                subtypesEditorLoader.windowClosed(subtypes)
+                                                // subtypesEditorLoader.windowClosed(subtypes)
+
+                                                // var subtypes = subtypesModel.subtypes
+                                                // for(var i=0; i<subtypesModel.count; i++){
+                                                //     var subtype = subtypes[i]
+                                                //     console.log(subtype.name)
+                                                // }
                                             }
                                         }
                                     }
 
                                     // 
-                                    Connections {
-                                        target: subtypesEditorLoader
-                                        function onWindowClosed(editedSubtypes) {
-                                            // console.log("Window closed with subtypes:", JSON.stringify(editedSubtypes))
-                                            subtypes = editedSubtypes
+                                    // Connections {
+                                    //     target: subtypesEditorLoader
+                                    //     function onWindowClosed(editedSubtypes) {
+                                    //         console.log("Window closed with subtypes:", JSON.stringify(editedSubtypes))
+                                    //         subtypes = editedSubtypes
                                             
-                                        }
-                                    }
+                                    //     }
+                                    // }
                                 }
                             }
                         }
@@ -325,26 +332,13 @@ ApplicationWindow {
                             errorMessageDialog.informativeText = qsTr("Please enter asset names");
                             errorMessageDialog.open();
                         } else{
-                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.assets);
+                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.items);
                         }
                     }
                 }
             }
         }
     }
-
-    
-
-    
-
-    // SubtypesEditorWindow {
-    //     id: subtypesEditorWindow
-
-    //     x: root.x + root.width / 2 - width / 2
-    //     y: root.y + root.height / 2 - height / 2
-
-    //     assets: assetListModel
-    // }
 
     MessageDialog {
         id: errorMessageDialog

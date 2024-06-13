@@ -12,9 +12,9 @@ Window {
     minimumWidth: 400
     minimumHeight: 200
 
-    property var assetsModel
+    // property var assetsModel
 
-    property var subtypes: []
+    property var subtypesModel
 
     title: qsTr("Edit subtypes and variants")
 
@@ -37,7 +37,7 @@ Window {
                     // width: 200
                     text: qsTr("Add Subtype")
                     onClicked: {
-                        subtypesListView.model.append({"name": "", "variants": []})
+                        subtypesListView.model.add()
                     }
                 }
             }
@@ -51,21 +51,7 @@ Window {
                     ListView {
                         id: subtypesListView
                         
-                        model: ListModel {
-                            Component.onCompleted: {
-                                let subtypes = [
-                                    {
-                                        name: "",
-                                        variants: [
-                                            {
-                                                name: "",
-                                            }
-                                        ]
-                                    }
-                                ]
-                                append(subtypes)
-                            }
-                        }
+                        model: subtypesModel
 
                         spacing: 20
 
@@ -76,8 +62,11 @@ Window {
                                     id: subtypeNameTextField
                                     placeholderText: qsTr("Enter subtype name")
 
+                                    text: name
+
                                     onTextEdited: {
-                                        subtypesListView.model.setProperty(index, "name", text);
+                                        // subtypesListView.model.setProperty(index, "name", text);
+                                        name = text
                                     }
                                 }
 
@@ -89,7 +78,7 @@ Window {
                                     anchors.verticalCenter: subtypeNameTextField.verticalCenter
 
                                     onClicked: {
-                                        variantListView.model.append({"name": ""})
+                                        variantListView.model.add()
                                     }
                                 }
                             }
@@ -114,8 +103,10 @@ Window {
                                                 id: subtypeNameTextField
                                                 placeholderText: qsTr("Enter Variant name")
 
+                                                text: name
+
                                                 onTextEdited: {
-                                                    variantListView.model.setProperty(index, "name", text);
+                                                    name = text
                                                 }
                                             }
                                         }
@@ -136,19 +127,21 @@ Window {
                     text: qsTr("Save")
 
                     onClicked: {
-                        var subtypes = []
-                        for(var i=0; i<subtypesListView.model.count; i++){
-                            var subtype = subtypesListView.model.get(i)
+                        // subtypesEditorWindow.subtypesModel = subtypesListView.model
 
-                            var variants = []
-                            for(var j=0; j<subtype["variants"].count; j++){
-                                variants.push(subtype["variants"].get(j)["name"])
-                            }
-                            
-                            subtypes.push({"name": subtype["name"], "variants": variants})
-                        }
+                        // console.log(subtypesListView.model)
 
-                        subtypesEditorWindow.subtypes = subtypes
+                        // var subtypes = subtypesListView.model.subtypes
+                        // for(var i=0; i<subtypesListView.model.count; i++){
+                        //     var subtype = subtypes[i]
+                        //     console.log(subtype.name)
+                        // }
+
+                        // var subtypes = subtypesEditorWindow.subtypesModel.subtypes
+                        // for(var i=0; i<subtypesListView.model.count; i++){
+                        //     var subtype = subtypes[i]
+                        //     console.log(subtype.name)
+                        // }
 
                         subtypesEditorWindow.close()
                     }

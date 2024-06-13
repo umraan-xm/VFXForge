@@ -4,34 +4,372 @@ import json
 import PyQt6.QtCore as qtc
 
 
-class Variant:
-    def __init__(self, name: str):
-        self.name = name
+# class Variant:
+#     def __init__(self, name: str):
+#         self.name = name
 
-    def __str__(self):
-        return f"{self.name}"
+#     def __str__(self):
+#         return f"{self.name}"
     
 
-class AssetSubtype:
-    def __init__(self, name: str, variants: List[Variant]=[]):
-        self.name = name
-        self.variants = variants
+# class AssetSubtype:
+#     def __init__(self, name: str, variants: List[Variant]=[]):
+#         self.name = name
+#         self.variants = variants
 
-    def __str__(self):
-        return f"{self.name}"
+#     def __str__(self):
+#         return f"{self.name}"
     
 
-class Asset:
-    def __init__(self, name: str, asset_type: str, subtypes: List[AssetSubtype]=[]):
-        self.name = name
-        self.type = asset_type
-        self.subtypes = subtypes
+# class Asset:
+#     def __init__(self, name: str, asset_type: str, subtypes: List[AssetSubtype]=[]):
+#         self.name = name
+#         self.type = asset_type
+#         self.subtypes = subtypes
 
-    def __str__(self):
-        return f"Name: {self.name}, Type: {self.type}"
+#     def __str__(self):
+#         return f"Name: {self.name}, Type: {self.type}"
     
 
-class AssetListModel(qtc.QAbstractListModel):
+# class AssetListModel(qtc.QAbstractListModel):
+#     NameRole = qtc.Qt.ItemDataRole.UserRole + 1
+#     TypeRole = qtc.Qt.ItemDataRole.UserRole + 2
+#     SubtypesRole = qtc.Qt.ItemDataRole.UserRole + 3
+
+#     def __init__(self):
+#         super().__init__()
+#         self._assets = []
+
+#     def rowCount(self, parent=qtc.QModelIndex()):
+#         return len(self._assets)
+
+#     def data(self, index, role=qtc.Qt.ItemDataRole.DisplayRole):
+#         if not index.isValid():
+#             return None
+
+#         asset: Asset = self._assets[index.row()]
+        
+#         if role == AssetListModel.NameRole:
+#             return asset.name
+
+#         elif role == AssetListModel.TypeRole:
+#             return asset.type
+
+#         elif role == AssetListModel.SubtypesRole:
+#             return asset.subtypes
+           
+        
+#     def setData(self, index, value, role=qtc.Qt.ItemDataRole.EditRole):
+#         if not index.isValid():
+#             return None
+        
+#         asset: Asset = self._assets[index.row()]
+        
+#         if role == AssetListModel.NameRole:
+#             asset.name = value
+
+#         elif role == AssetListModel.TypeRole:
+#             asset.type = value
+
+#         elif role == AssetListModel.SubtypesRole:
+#             asset.subtypes = [AssetSubtype(name=subtype_dict["name"], variants=subtype_dict["variants"]) for subtype_dict in value.toVariant()]
+            
+           
+#         else:
+#             return False
+
+#         self.dataChanged.emit(index, index, [role])
+#         return True
+
+#     def roleNames(self):
+#         return {
+#             AssetListModel.NameRole: b'name',
+#             AssetListModel.TypeRole: b'type',
+#             AssetListModel.SubtypesRole: b'subtypes',
+#         }
+    
+#     @qtc.pyqtProperty(int)
+#     def count(self) -> int:
+#         return self.rowCount()
+    
+#     @qtc.pyqtProperty(bool)
+#     def isValid(self) -> bool:
+#         for asset in self._assets:
+#             if not asset.name.strip():
+#                 return False
+#         return True
+
+#     @qtc.pyqtSlot(str, str)
+#     def add(self, name: str, asset_type: str, subtypes: List[AssetSubtype]=[]):
+#         self.beginInsertRows(qtc.QModelIndex(), self.rowCount(), self.rowCount())
+
+#         self._assets.append(Asset(name, asset_type))
+        
+#         self.endInsertRows()
+
+#     @qtc.pyqtSlot()
+#     def pop(self):
+#         if self.rowCount() > 0:
+#             self.beginRemoveRows(qtc.QModelIndex(), self.rowCount() - 1, self.rowCount() - 1)
+
+#             self._assets.pop()
+
+#             self.endRemoveRows()
+
+#     @qtc.pyqtSlot()
+#     def clear(self):
+#         self.beginRemoveRows(qtc.QModelIndex(), 0, self.rowCount() - 1)
+
+#         self._assets.clear()
+
+#         self.endRemoveRows()
+
+#     @qtc.pyqtProperty(list)
+#     def assets(self) -> List[Asset]:
+#         return self._assets
+    
+#     @qtc.pyqtProperty(list)
+#     def toDictList(self) -> List[dict]:
+#         return [asset.__dict__ for asset in self._assets]
+
+
+
+# class Asset:
+#     def __init__(self, name: str, asset_type: str, subtypes: List[AssetSubtype]=[]):
+#         self.name = name
+#         self.type = asset_type
+#         self.subtypes = subtypes
+
+#     def __str__(self):
+#         return f"Name: {self.name}, Type: {self.type}"
+
+
+class QAssetVariant(qtc.QObject):
+    def __init__(self):
+        super().__init__()
+        self._name = ""
+
+    @qtc.pyqtProperty(str)
+    def name(self) -> str:
+        return self._name
+    
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+
+
+class QAssetVariantListModel(qtc.QAbstractListModel):
+    NameRole = qtc.Qt.ItemDataRole.UserRole + 1
+
+    def __init__(self):
+        super().__init__()
+        self._variants = []
+
+    def rowCount(self, parent=qtc.QModelIndex()):
+        return len(self._variants)
+
+    def data(self, index, role=qtc.Qt.ItemDataRole.DisplayRole):
+        if not index.isValid():
+            return None
+
+        variant: QAssetVariant = self._variants[index.row()]
+        
+        if role == QAssetSubtypeListModel.NameRole:
+            return variant.name
+           
+        
+    def setData(self, index, value, role=qtc.Qt.ItemDataRole.EditRole):
+        if not index.isValid():
+            return None
+        
+        variant: QAssetVariant = self._variants[index.row()]
+        
+        if role == QAssetSubtypeListModel.NameRole:
+            variant.name = value   
+           
+        else:
+            return False
+
+        self.dataChanged.emit(index, index, [role])
+        return True
+
+    def roleNames(self):
+        return {
+            QAssetVariantListModel.NameRole: b'name',
+        }
+    
+    @qtc.pyqtProperty(int)
+    def count(self) -> int:
+        return self.rowCount()
+    
+    @qtc.pyqtProperty(list)
+    def items(self) -> List[QAssetVariant]:
+        return self._variants
+
+    @qtc.pyqtSlot()
+    def add(self):
+        self.beginInsertRows(qtc.QModelIndex(), self.rowCount(), self.rowCount())
+
+        self._variants.append(QAssetVariant())
+        
+        self.endInsertRows()
+
+    @qtc.pyqtSlot()
+    def pop(self):
+        if self.rowCount() > 0:
+            self.beginRemoveRows(qtc.QModelIndex(), self.rowCount() - 1, self.rowCount() - 1)
+
+            self._variants.pop()
+
+            self.endRemoveRows()
+
+    @qtc.pyqtSlot()
+    def clear(self):
+        self.beginRemoveRows(qtc.QModelIndex(), 0, self.rowCount() - 1)
+
+        self._variants.clear()
+
+        self.endRemoveRows()
+
+
+class QAssetSubtype(qtc.QObject):
+    def __init__(self):
+        super().__init__()
+        self._name = ""
+        self._variants = QAssetVariantListModel()
+
+    @qtc.pyqtProperty(str)
+    def name(self) -> str:
+        return self._name
+    
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+    
+    @qtc.pyqtProperty(str)
+    def variants(self) -> str:
+        return self._variants
+    
+    @variants.setter
+    def variants(self, value: str):
+        self._variants = value
+
+
+class QAssetSubtypeListModel(qtc.QAbstractListModel):
+    NameRole = qtc.Qt.ItemDataRole.UserRole + 1
+    VariantsRole = qtc.Qt.ItemDataRole.UserRole + 2
+
+    def __init__(self):
+        super().__init__()
+        self._subtypes = []
+
+    def rowCount(self, parent=qtc.QModelIndex()):
+        return len(self._subtypes)
+
+    def data(self, index, role=qtc.Qt.ItemDataRole.DisplayRole):
+        if not index.isValid():
+            return None
+
+        subtype: QAssetSubtype = self._subtypes[index.row()]
+        
+        if role == QAssetSubtypeListModel.NameRole:
+            return subtype.name
+
+        elif role == QAssetSubtypeListModel.VariantsRole:
+            return subtype.variants
+           
+        
+    def setData(self, index, value, role=qtc.Qt.ItemDataRole.EditRole):
+        if not index.isValid():
+            return None
+        
+        subtype: QAssetSubtype = self._subtypes[index.row()]
+        
+        if role == QAssetSubtypeListModel.NameRole:
+            subtype.name = value
+
+        elif role == QAssetSubtypeListModel.VariantsRole:
+            subtype.variants = value     
+           
+        else:
+            return False
+
+        self.dataChanged.emit(index, index, [role])
+        return True
+
+    def roleNames(self):
+        return {
+            QAssetSubtypeListModel.NameRole: b'name',
+            QAssetSubtypeListModel.VariantsRole: b'variants',
+        }
+    
+    @qtc.pyqtProperty(int)
+    def count(self) -> int:
+        return self.rowCount()
+    
+    @qtc.pyqtProperty(list)
+    def items(self) -> List[QAssetSubtype]:
+        return self._subtypes
+
+    @qtc.pyqtSlot()
+    def add(self):
+        self.beginInsertRows(qtc.QModelIndex(), self.rowCount(), self.rowCount())
+
+        self._subtypes.append(QAssetSubtype())
+        
+        self.endInsertRows()
+
+    @qtc.pyqtSlot()
+    def pop(self):
+        if self.rowCount() > 0:
+            self.beginRemoveRows(qtc.QModelIndex(), self.rowCount() - 1, self.rowCount() - 1)
+
+            self._subtypes.pop()
+
+            self.endRemoveRows()
+
+    @qtc.pyqtSlot()
+    def clear(self):
+        self.beginRemoveRows(qtc.QModelIndex(), 0, self.rowCount() - 1)
+
+        self._subtypes.clear()
+
+        self.endRemoveRows()
+
+
+class QAsset(qtc.QObject):
+    def __init__(self):
+        super().__init__()
+        self._name = ""
+        self._type = ""
+        self._subtypes = QAssetSubtypeListModel()
+
+    @qtc.pyqtProperty(str)
+    def name(self) -> str:
+        return self._name
+    
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+    
+    @qtc.pyqtProperty(str)
+    def type(self) -> str:
+        return self._type
+    
+    @type.setter
+    def type(self, value: str):
+        self._type = value
+
+    @qtc.pyqtProperty(list)
+    def subtypes(self) -> list:
+        return self._subtypes
+    
+    @subtypes.setter
+    def subtypes(self, value: list):
+        self._subtypes = value
+    
+
+class QAssetListModel(qtc.QAbstractListModel):
     NameRole = qtc.Qt.ItemDataRole.UserRole + 1
     TypeRole = qtc.Qt.ItemDataRole.UserRole + 2
     SubtypesRole = qtc.Qt.ItemDataRole.UserRole + 3
@@ -47,15 +385,15 @@ class AssetListModel(qtc.QAbstractListModel):
         if not index.isValid():
             return None
 
-        asset: Asset = self._assets[index.row()]
+        asset: QAsset = self._assets[index.row()]
         
-        if role == AssetListModel.NameRole:
+        if role == QAssetListModel.NameRole:
             return asset.name
 
-        elif role == AssetListModel.TypeRole:
+        elif role == QAssetListModel.TypeRole:
             return asset.type
 
-        elif role == AssetListModel.SubtypesRole:
+        elif role == QAssetListModel.SubtypesRole:
             return asset.subtypes
            
         
@@ -63,16 +401,16 @@ class AssetListModel(qtc.QAbstractListModel):
         if not index.isValid():
             return None
         
-        asset: Asset = self._assets[index.row()]
+        asset: QAsset = self._assets[index.row()]
         
-        if role == AssetListModel.NameRole:
+        if role == QAssetListModel.NameRole:
             asset.name = value
 
-        elif role == AssetListModel.TypeRole:
+        elif role == QAssetListModel.TypeRole:
             asset.type = value
 
-        elif role == AssetListModel.SubtypesRole:
-            asset.subtypes = [AssetSubtype(name=subtype_dict["name"], variants=subtype_dict["variants"]) for subtype_dict in value.toVariant()]
+        elif role == QAssetListModel.SubtypesRole:
+            asset.subtypes = value
             
            
         else:
@@ -83,9 +421,9 @@ class AssetListModel(qtc.QAbstractListModel):
 
     def roleNames(self):
         return {
-            AssetListModel.NameRole: b'name',
-            AssetListModel.TypeRole: b'type',
-            AssetListModel.SubtypesRole: b'subtypes',
+            QAssetListModel.NameRole: b'name',
+            QAssetListModel.TypeRole: b'type',
+            QAssetListModel.SubtypesRole: b'subtypes',
         }
     
     @qtc.pyqtProperty(int)
@@ -98,12 +436,20 @@ class AssetListModel(qtc.QAbstractListModel):
             if not asset.name.strip():
                 return False
         return True
+    
+    @qtc.pyqtProperty(list)
+    def items(self) -> List[QAsset]:
+        return self._assets
+    
+    @qtc.pyqtProperty(list)
+    def toDictList(self) -> List[dict]:
+        return [asset.__dict__ for asset in self._assets]
 
-    @qtc.pyqtSlot(str, str)
-    def add(self, name: str, asset_type: str, subtypes: List[AssetSubtype]=[]):
+    @qtc.pyqtSlot()
+    def add(self):
         self.beginInsertRows(qtc.QModelIndex(), self.rowCount(), self.rowCount())
 
-        self._assets.append(Asset(name, asset_type))
+        self._assets.append(QAsset())
         
         self.endInsertRows()
 
@@ -123,11 +469,3 @@ class AssetListModel(qtc.QAbstractListModel):
         self._assets.clear()
 
         self.endRemoveRows()
-
-    @qtc.pyqtProperty(list)
-    def assets(self) -> List[Asset]:
-        return self._assets
-    
-    @qtc.pyqtProperty(list)
-    def toDictList(self) -> List[dict]:
-        return [asset.__dict__ for asset in self._assets]

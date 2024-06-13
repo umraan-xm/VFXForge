@@ -18,7 +18,7 @@ from core.project_builder import ProjectBuilder
 from settings import JSONSettings
 import constants
 
-from models.asset import AssetListModel, Asset
+from models.asset import QAssetListModel, QAsset
 
 
 class Backend(qtc.QObject):
@@ -36,7 +36,7 @@ class Backend(qtc.QObject):
         return self.settings.get_asset_types()
 
     @qtc.pyqtSlot(str, str, str, list)
-    def createProject(self, project_path: str, project_name: str, project_type: str, assets: List[Asset]):
+    def createProject(self, project_path: str, project_name: str, project_type: str, assets: List[QAsset]):
         logger.info(f"Creating project at {project_path} with name {project_name} and type {project_type}")
 
         if not self.project_builder or not self.project_builder.matches(name=project_name, path=project_path):
@@ -52,9 +52,9 @@ class Backend(qtc.QObject):
                 logger.info(asset)
 
                 asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset.type)
-                subtypes = self.settings.get_asset_subtypes(asset_type=asset.type)
+                # subtypes = self.settings.get_asset_subtypes(asset_type=asset.type)
 
-                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir, subtypes=subtypes)
+                self.project_builder.add_asset(name=asset.name, asset_type_dir=asset_type_dir, subtypes=[])
 
 
         logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")
@@ -68,8 +68,11 @@ def main():
     backend = Backend()
     engine.rootContext().setContextProperty('backend', backend)
 
-    assetListModel = AssetListModel()
+    assetListModel = QAssetListModel()
     engine.rootContext().setContextProperty('assetListModel', assetListModel)
+
+    # qAsset = QAsset()
+    # engine.rootContext().setContextProperty('qAsset', qAsset)
 
     engine.load(qtc.QUrl.fromLocalFile("ui/main.qml"))
 
