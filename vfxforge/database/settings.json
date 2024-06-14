@@ -28,5 +28,94 @@
             "subtypes": [],
             "dir_name": "veh"
         }
+    },
+    "default_asset_type": "Character",
+    "versions_dirs": {
+        "Shoot": {
+            "disciplines": {
+                "Data Acquisition": {
+                    "dir_name": "dta"
+                },
+                "Data Processing": {
+                    "dir_name": "dtp"
+                }
+            },
+            "dir_name": "sho"
+        },
+        "Concept": {
+            "disciplines": {
+                "Art": {
+                    "dir_name": "art"
+                },
+                "Sculpt": {
+                    "dir_name": "scu"
+                }
+            },
+            "dir_name": "ccp"
+        },
+        "Model": {
+            "disciplines": {
+                "Geometry": {
+                    "dir_name": "geo"
+                },
+                "Scan": {
+                    "dir_name": "scn"
+                },
+                "Sculpt": {
+                    "dir_name": "scu"
+                }
+            },
+            "dir_name": "mod"
+        },
+        "Surfacing": {
+            "disciplines": {
+                "Texture": {
+                    "dir_name": "tex"
+                },
+                "Look Development": {
+                    "dir_name": "ldv"
+                },
+                "Groom": {
+                    "dir_name": "grm"
+                }
+            },
+            "dir_name": "srf"
+        },
+        "Rigging": {
+            "disciplines": {
+                "Animation": {
+                    "dir_name": "anm"
+                },
+                "Mocap": {
+                    "dir_name": "mcp"
+                }
+            },
+            "dir_name": "rig"
+        },
+        "Tech Rigging": {
+            "disciplines": {
+                "Costume": {
+                    "dir_name": "cst"
+                },
+                "Groom": {
+                    "dir_name": "grm"
+                },
+                "Muscle": {
+                    "dir_name": "msc"
+                }
+            },
+            "dir_name": "trg"
+        },
+        "USD": {
+            "disciplines": {
+                "Compound": {
+                    "dir_name": "cmp"
+                },
+                "Package": {
+                    "dir_name": "pck"
+                }
+            },
+            "dir_name": "usd"
+        }
     }
 }
