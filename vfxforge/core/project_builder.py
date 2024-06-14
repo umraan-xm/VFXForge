@@ -16,43 +16,42 @@ class ProjectBuilder:
         self.project_type = project_type
 
     def _create_directory(self, path: str, log_message: str=""):
-        logger.debug(log_message)
+        logger.debug(f"Creating Directory. {path}")
         os.makedirs(path, exist_ok=True)
 
     def _create_wip_directory(self, path: str):
-        self._create_directory(os.path.join(path, self.WIP), log_message=f"Creating wip directory")
+        self._create_directory(os.path.join(path, self.WIP))
 
     def _create_versions_directory(self, path: str):
-        self._create_directory(os.path.join(path, self.VERSIONS), log_message=f"Creating versions directory")
+        self._create_directory(os.path.join(path, self.VERSIONS))
 
     def _create_published_directory(self, path: str):
-        self._create_directory(os.path.join(path, self.PUBLISHED), log_message=f"Creating published directory")
+        self._create_directory(os.path.join(path, self.PUBLISHED))
 
     def matches(self, name: str, path: str) -> bool:
         return self.path == os.path.join(path, name)
 
     def build_project(self, base_dirs: List[str]):
-        self._create_directory(self.path, log_message=f"Creating Project Directories: {self.path}")
+        self._create_directory(self.path)
         
         for directory in base_dirs:
-            self._create_directory(os.path.join(self.path, directory), log_message=f"Creating directory: {directory}")
-            
+            self._create_directory(os.path.join(self.path, directory))
 
     def add_asset(self, name: str, asset_type_dir: str, subtypes: List[Tuple[str, List[str]]]=None):
         asset_path = os.path.join(self.path, ProjectBuilder.ASSET, asset_type_dir, name)
 
-        self._create_directory(asset_path, log_message=f"Creating asset directory: {asset_path}")
+        self._create_directory(asset_path)
 
         if subtypes:
             for subtype, variants in subtypes:
                 subtype_path = os.path.join(asset_path, subtype)
 
-                self._create_directory(subtype_path, log_message=f"Creating {subtype} subtype directory")
+                self._create_directory(subtype_path)
 
                 for variant in variants:
                     variant_path = os.path.join(subtype_path, variant)
 
-                    self._create_directory(variant_path, log_message=f"Creating {variant} variant directory")
+                    self._create_directory(variant_path)
 
                     self._create_published_directory(variant_path)
                     self._create_versions_directory(variant_path)
