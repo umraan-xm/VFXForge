@@ -21,7 +21,7 @@ class Settings(ABC):
         pass
 
     @abstractmethod
-    def get_asset_type_dir_name(self) -> str:
+    def get_asset_type_dir_name(self, asset_type: str) -> str:
         pass
 
     @abstractmethod
