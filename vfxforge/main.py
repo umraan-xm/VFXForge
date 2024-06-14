@@ -1,9 +1,6 @@
 import sys
 from typing import List
 
-import os
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
 import logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
@@ -74,10 +71,7 @@ def main():
     assetListModel = QAssetListModel()
     engine.rootContext().setContextProperty('assetListModel', assetListModel)
 
-    # qAsset = QAsset()
-    # engine.rootContext().setContextProperty('qAsset', qAsset)
-
-    engine.load(qtc.QUrl.fromLocalFile("ui/main.qml"))
+    engine.load(qtc.QUrl.fromLocalFile(constants.MAIN_QML_FILEPATH))
 
     if not engine.rootObjects():
         return -1
