@@ -32,6 +32,18 @@ class Settings(ABC):
     def get_version_departments(self) -> List[str]:
         pass
 
+    @abstractmethod
+    def get_version_dept_dir_name(self, department: str):
+        pass
+
+    @abstractmethod
+    def get_version_dept_disciplines(self, department: str) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_version_dept_disc_dir_name(self, department: str, discipline: str) -> str:
+        pass
+
 
 class JSONSettings(Settings):
     def __init__(self, filepath: str):
@@ -61,4 +73,13 @@ class JSONSettings(Settings):
     
     def get_version_departments(self) -> List[str]:
         return list(self._settings.get("versions_dirs"))
+    
+    def get_version_dept_dir_name(self, department: str):
+        return self._settings.get("versions_dirs").get(department).get("dir_name")
+    
+    def get_version_dept_disciplines(self, department: str) -> List[str]:
+        return list(self._settings.get("versions_dirs").get(department).get("disciplines"))
+    
+    def get_version_dept_disc_dir_name(self, department: str, discipline: str) -> str:
+        return self._settings.get("versions_dirs").get(department).get("disciplines").get(discipline).get("dir_name")
     

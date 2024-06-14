@@ -100,6 +100,9 @@ class QAssetSubtype(qtc.QObject):
         self._name = name
         self._variants = QAssetVariantListModel()
 
+    def __repr__(self) -> str:
+        return f"QAssetSubtype(name={self._name}, subtypes=QAssetVariantListModel)"
+
     @qtc.pyqtProperty(str)
     def name(self) -> str:
         return self._name
@@ -124,6 +127,9 @@ class QAssetSubtypeListModel(qtc.QAbstractListModel):
     def __init__(self):
         super().__init__()
         self._subtypes = []
+
+    def __len__(self) -> int:
+        return len(self._subtypes)
 
     def rowCount(self, parent=qtc.QModelIndex()):
         return len(self._subtypes)
@@ -205,6 +211,9 @@ class QAsset(qtc.QObject):
         self._name = ""
         self._type = ""
         self._subtypes = QAssetSubtypeListModel()
+
+    def __repr__(self) -> str:
+        return f"QAsset(name={self._name}, type={self._type}, subtypes=QAssetSubtypeListModel)"
 
     @qtc.pyqtProperty(str)
     def name(self) -> str:

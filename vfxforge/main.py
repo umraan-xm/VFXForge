@@ -37,7 +37,7 @@ class Backend(qtc.QObject):
         logger.info(f"Creating project at {project_path} with name {project_name} and type {project_type}")
 
         if not self.project_builder or not self.project_builder.matches(name=project_name, path=project_path):
-            self.project_builder = ProjectBuilder(name=project_name, path=project_path, project_type=project_type)
+            self.project_builder = ProjectBuilder(name=project_name, path=project_path, project_type=project_type, settings=self.settings)
 
             self.project_builder.build_project(project_type=project_type)
         
@@ -45,14 +45,14 @@ class Backend(qtc.QObject):
             logger.info(f"Project contains {len(assets)} assets.")
             for asset in assets:
                 logger.info(asset)
+                asset_path = self.project_builder.add_asset(name=asset.name, asset_type=asset.type)
 
-                # asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset.type)
+                if asset.subtypes.items:
+                    logger.info(f"Asset contains {len(asset.subtypes)} subtypes.")
+                    for subtype in asset.subtypes.items:
+                        logger.info(subtype)
 
-                subtypes = []
-                for subtype in asset.subtypes.items:
-                    subtypes.append((subtype.name, map(str, subtype.variants.items)))
-
-                self.project_builder.add_asset(name=asset.name, asset_type=asset.type, subtypes=subtypes)
+                        self.project_builder.add_asset_subtype(asset_path=asset_path, name=subtype.name, variants=map(str, subtype.variants.items))
 
 
         logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")

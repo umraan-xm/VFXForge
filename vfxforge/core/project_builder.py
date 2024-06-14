@@ -26,10 +26,24 @@ class ProjectBuilder:
         self._create_directory(os.path.join(path, self.WIP))
 
     def _create_versions_directory(self, path: str):
-        self._create_directory(os.path.join(path, self.VERSIONS))
+        path = os.path.join(path, self.VERSIONS)
+        self._create_directory(path)
+
+        departments = self.settings.get_version_departments()
+        for department in departments:
+            disciplines = self.settings.get_version_dept_disciplines(department)
+
+            for discipline in disciplines:
+                discipline_path = os.path.join(path, self.settings.get_version_dept_dir_name(department), self.settings.get_version_dept_disc_dir_name(department, discipline))
+                self._create_directory(discipline_path)
 
     def _create_published_directory(self, path: str):
         self._create_directory(os.path.join(path, self.PUBLISHED))
+
+    def _create_working_folders(self, path: str):
+        self._create_published_directory(path)
+        self._create_versions_directory(path)
+        self._create_wip_directory(path)
 
     def matches(self, name: str, path: str) -> bool:
         return self.path == os.path.join(path, name)
@@ -42,23 +56,41 @@ class ProjectBuilder:
         for directory in base_dirs:
             self._create_directory(os.path.join(self.path, directory))
 
-    def add_asset(self, name: str, asset_type: str, subtypes: List[Tuple[str, List[str]]]=None):
+    def add_asset(self, name: str, asset_type: str, subtypes: List[Tuple[str, List[str]]]=None) -> str:
         asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset_type)
         asset_path = os.path.join(self.path, ProjectBuilder.ASSET, asset_type_dir, name)
 
         self._create_directory(asset_path)
 
-        if subtypes:
-            for subtype, variants in subtypes:
-                subtype_path = os.path.join(asset_path, subtype)
+        return asset_path
 
-                self._create_directory(subtype_path)
+        # if subtypes:
+        #     for subtype, variants in subtypes:
+        #         subtype_path = os.path.join(asset_path, subtype)
 
-                for variant in variants:
-                    variant_path = os.path.join(subtype_path, variant)
+        #         self._create_directory(subtype_path)
 
-                    self._create_directory(variant_path)
+        #         if variants:
+        #             for variant in variants:
+        #                 variant_path = os.path.join(subtype_path, variant)
 
-                    self._create_published_directory(variant_path)
-                    self._create_versions_directory(variant_path)
-                    self._create_wip_directory(variant_path)
+        #                 self._create_directory(variant_path)
+
+        #                 self._create_working_folders(variant_path)
+        #         else:
+        #             self._create_working_folders(subtype_path)
+
+    def add_asset_subtype(self, asset_path: str, name: str, variants: List[str]=None):
+        subtype_path = os.path.join(asset_path, name)
+
+        self._create_directory(subtype_path)
+
+        if variants:
+            for variant in variants:
+                variant_path = os.path.join(subtype_path, variant)
+
+                self._create_directory(variant_path)
+
+                self._create_working_folders(variant_path)
+        else:
+            self._create_working_folders(subtype_path)
