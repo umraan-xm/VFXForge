@@ -130,6 +130,9 @@ class QAssetSubtypeListModel(qtc.QAbstractListModel):
 
     def __len__(self) -> int:
         return len(self._subtypes)
+    
+    def append(self, subtype: QAssetSubtype):
+        self._subtypes.append(subtype)
 
     def rowCount(self, parent=qtc.QModelIndex()):
         return len(self._subtypes)
@@ -179,11 +182,12 @@ class QAssetSubtypeListModel(qtc.QAbstractListModel):
     def items(self) -> List[QAssetSubtype]:
         return self._subtypes
 
+    @qtc.pyqtSlot(str)
     @qtc.pyqtSlot()
-    def add(self):
+    def add(self, name=""):
         self.beginInsertRows(qtc.QModelIndex(), self.rowCount(), self.rowCount())
 
-        self._subtypes.append(QAssetSubtype())
+        self._subtypes.append(QAssetSubtype(name=name))
         
         self.endInsertRows()
 

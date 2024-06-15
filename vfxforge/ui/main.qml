@@ -229,6 +229,7 @@ ApplicationWindow {
                                                 // Set the roles defined in AssetListModel
                                                 name = assetNameTextField.text
                                                 type = currentText
+                                                subtypes.clear()
                                             }
                                         }
                                     }

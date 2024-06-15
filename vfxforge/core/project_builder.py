@@ -64,22 +64,6 @@ class ProjectBuilder:
 
         return asset_path
 
-        # if subtypes:
-        #     for subtype, variants in subtypes:
-        #         subtype_path = os.path.join(asset_path, subtype)
-
-        #         self._create_directory(subtype_path)
-
-        #         if variants:
-        #             for variant in variants:
-        #                 variant_path = os.path.join(subtype_path, variant)
-
-        #                 self._create_directory(variant_path)
-
-        #                 self._create_working_folders(variant_path)
-        #         else:
-        #             self._create_working_folders(subtype_path)
-
     def add_asset_subtype(self, asset_path: str, name: str, variants: List[str]=None):
         subtype_path = os.path.join(asset_path, name)
 

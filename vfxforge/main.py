@@ -15,7 +15,7 @@ from core.project_builder import ProjectBuilder
 from settings import JSONSettings, Settings
 import constants
 
-from models.asset import QAssetListModel, QAsset, QAssetSubtypeListModel
+from models.asset import QAssetListModel, QAsset, QAssetSubtypeListModel, QAssetSubtype
 
 
 class Backend(qtc.QObject):
@@ -31,6 +31,10 @@ class Backend(qtc.QObject):
     @qtc.pyqtProperty('QStringList', constant=True)
     def assetTypes(self):
         return self.settings.get_asset_types()
+    
+    @qtc.pyqtSlot(str, result=list)
+    def getDefaultAssetSubtypes(self, asset_type: str):
+        return self.settings.get_default_asset_subtypes(asset_type=asset_type)
 
     @qtc.pyqtSlot(str, str, str, list)
     def createProject(self, project_path: str, project_name: str, project_type: str, assets: List[QAsset]):

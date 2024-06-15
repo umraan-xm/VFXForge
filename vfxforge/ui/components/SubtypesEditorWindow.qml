@@ -23,6 +23,14 @@ Window {
 
     modality: Qt.WindowModal
 
+    Component.onCompleted: {
+        if(subtypesModel.count == 0){
+            backend.getDefaultAssetSubtypes(currentAssetType).forEach(function(subtype) {
+                subtypesListView.model.add(subtype);
+            });
+        }
+    }
+
     Item {
         id: subtypesEditorWindowSection
         height: parent.height

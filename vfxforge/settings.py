@@ -25,7 +25,7 @@ class Settings(ABC):
         pass
 
     @abstractmethod
-    def get_asset_subtypes(self, asset_type: str) -> List[str]:
+    def get_default_asset_subtypes(self, asset_type: str) -> List[str]:
         pass
 
     @abstractmethod
@@ -68,7 +68,7 @@ class JSONSettings(Settings):
     def get_asset_type_dir_name(self, asset_type: str) -> str:
         return self._settings.get("asset_types").get(asset_type).get("dir_name")
     
-    def get_asset_subtypes(self, asset_type: str) -> List[str]:
+    def get_default_asset_subtypes(self, asset_type: str) -> List[str]:
         return self._settings.get("asset_types").get(asset_type).get("subtypes")
     
     def get_version_departments(self) -> List[str]:
