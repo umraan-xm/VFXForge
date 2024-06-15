@@ -144,6 +144,20 @@ ApplicationWindow {
                                     assetListView.model.add();
                                 }
                             }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.IBeamCursor
+                                onWheel: (wheel) => {
+                                    if (wheel.angleDelta.y > 0) {
+                                        assetCountTextField.text = Math.min(Number(assetCountTextField.text) + 1, 99).toString();
+                                    } else if (wheel.angleDelta.y < 0) {
+                                        assetCountTextField.text = Math.max(Number(assetCountTextField.text) - 1, 0).toString();
+                                    }
+                                    assetCountTextField.textEdited()
+                                }
+                            }
                         }
 
                         Button {
