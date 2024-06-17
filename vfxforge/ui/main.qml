@@ -1,9 +1,8 @@
 import QtQuick 
 import QtQuick.Window 
-import QtQuick.Controls 
 import QtQuick.Layouts 
-import QtQuick.Controls 
-// import QtQuick.Controls.Material
+// import QtQuick.Controls 
+import QtQuick.Controls.Basic
 import QtQuick.Dialogs
 import QtQml.Models 
 
@@ -12,16 +11,24 @@ import "./components"
 ApplicationWindow {
     id: root
     visible: true
-    width: 640
-    height: 480
-    minimumWidth: 400
-    minimumHeight: 200
+    width: 1280
+    height: 720
+    minimumWidth: 640
+    minimumHeight: 480
     title: 'VFXForge'
+
+    font.pointSize: 12
+    font.family: "Calibri"
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: forceActiveFocus()
+    }
 
     Rectangle {
         width: parent.width
         height: parent.height
-        // color: "white"
+        // color: "grey"
 
         Component.onCompleted: {
             // Preload the ComboBox popup
@@ -30,36 +37,50 @@ ApplicationWindow {
         }
 
         Column {
+            id: projectDetailsColumn
+
             anchors {
                 centerIn: parent
+                fill: parent
+                margins: 50
             }
             spacing: 20
+        
+            // color: "red"
+            property real textFieldWidth: 600
+            
 
             // PROJECT NAME
             Row {
                 spacing: 10
-                Text {
+                Label {
                     text: qsTr("Project Name")
+
+                    anchors.verticalCenter: projectNameTextField.verticalCenter
+
                     width: 150
                 }
-                TextField {
+                VFTextField {
                     id: projectNameTextField
                     placeholderText: qsTr("Enter a project name")
-                    width: 150
+                    width: projectDetailsColumn.textFieldWidth
                 }
             }
 
             // PROJECT PATH
             Row {
                 spacing: 10
-                Text {
+                Label {
                     text: qsTr("Project Path")
+
+                    anchors.verticalCenter: projectPathTextField.verticalCenter
+
                     width: 150
                 }
-                TextField {
+                VFTextField {
                     id: projectPathTextField
                     placeholderText: qsTr("Enter directory to place your project")
-                    width: 300
+                    width: projectDetailsColumn.textFieldWidth
                 }
                 FolderDialog {
                     id: projectPathFolderDialog
@@ -70,6 +91,7 @@ ApplicationWindow {
                 }
                 Button {
                     height: projectPathTextField.height
+                    width: 50
                     anchors.verticalCenter: projectPathTextField.verticalCenter
                     text: "..."
                     onClicked: {
@@ -81,25 +103,30 @@ ApplicationWindow {
             // PROJECT TYPE
             Row {
                 spacing: 10
-                Text {
+                Label {
+                    id: projectTypeLabel
+
                     text: qsTr("Project Type")
+                    anchors.verticalCenter: projectTypeComboBox.verticalCenter
                     width: 150
                 }
-                ComboBox {
+                VFComboBox {
                     id: projectTypeComboBox
                     width: 200
-                    focusPolicy: Qt.NoFocus
+                    height: projectTypeLabel.height + 20
+                    // focusPolicy: Qt.NoFocus
                     model: backend !== null ? backend.projectTypes : []
                 }
             }
 
             ToolSeparator {
                 orientation: Qt.Horizontal
-                width: parent.width
+                width: parent.width - parent.anchors.margins/2
             }
 
             // ASSET SECTION
             Row {
+                id: assetSectionRow
                 width: parent.width
                 Column {
                     id: assetSectionColumn
@@ -113,8 +140,8 @@ ApplicationWindow {
                         
                         property int sectionHeight: 25
 
-                        Text {
-                            width: 120
+                        Label {
+                            width: 200
                             anchors.verticalCenter: assetCountTextField.verticalCenter
 
                             text: qsTr("Number of Assets")
@@ -127,6 +154,8 @@ ApplicationWindow {
                             horizontalAlignment: TextInput.AlignLeft
                             verticalAlignment: TextInput.AlignVCenter
                             leftPadding: 5
+                            
+                            font.pointSize: root.font.pointSize - 3
                             
                             rightInset: -2
                             
@@ -209,10 +238,10 @@ ApplicationWindow {
 
                     // DISPLAY ASSETS
                     Row {
-                        
                         ScrollView {
                             width: assetSectionColumn.width
-                            height: 150
+                            // anchors.fill: parent
+                            height: root.height - root.height/2
                             clip: true
                             
                             ListView {
@@ -221,22 +250,27 @@ ApplicationWindow {
                                 spacing: 20
 
                                 delegate: Column {
-                                    spacing: 5
+                                    spacing: 10
                                    
                                     // ASSET TYPE
                                     Row {
                                         spacing: 10
 
-                                        Text {
-                                            width: 80
+                                        Label {
+                                            id: assetTypeLabel
+
+                                            anchors.verticalCenter: assetTypeComboBox.verticalCenter
+
+                                            width: 140
 
                                             text: qsTr("Asset Type")
                                         }
 
-                                        ComboBox {
+                                        VFComboBox {
                                             id: assetTypeComboBox
 
-                                            width: 150
+                                            width: 200
+                                            height: assetTypeLabel.height + 10
 
                                             model: backend !== null ? backend.assetTypes : []
                                             onCurrentTextChanged: {
@@ -252,16 +286,18 @@ ApplicationWindow {
                                     Row {
                                         spacing: 10
 
-                                        Text {
-                                            width: 80
+                                        Label {
+                                            width: 140
+
+                                            anchors.verticalCenter: assetNameTextField.verticalCenter
 
                                             text: qsTr("Asset Name")
                                         }
 
-                                        TextField {
+                                        VFTextField {
                                             id: assetNameTextField
                                             
-                                            width: 150
+                                            width: 200
 
                                             placeholderText: qsTr("Enter asset name")
                                             validator: RegularExpressionValidator { regularExpression: /[a-zA-Z]*/}

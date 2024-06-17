@@ -1,7 +1,8 @@
 {
     "base_dirs": {
         "VFX": ["asset", "sequence", "IO", "development", "pipeline", "rnd"],
-        "TV_EPISODIC": ["asset", "episode", "IO", "development", "pipeline", "rnd"]
+        "TV EPISODIC": ["asset", "episode", "IO", "development", "pipeline", "rnd"],
+        "ANIMATION": ["asset", "episode", "IO", "development", "pipeline", "rnd"]
     },
     "asset_types": {
         "Character": {
