@@ -6,9 +6,27 @@ ComboBox {
 
     // focusPolicy: Qt.NoFocus
 
-    indicator: Item{
+    indicator: Image {
+            id: downArrowIcon
+            source: "../images/down_arrow.svg"
 
-    }
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.rightMargin: 10
+
+            fillMode: Image.PreserveAspectFit
+
+            height: 15
+            width: 15
+
+            Behavior on rotation {
+                RotationAnimation {
+                    duration: 400
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
+    
 
     MouseArea {
         anchors.fill: parent
@@ -46,8 +64,14 @@ ComboBox {
             }
         }
 
-        onOpened: opacity = 1
-        onClosed: opacity = 0 
+        onOpened: {
+            downArrowIcon.rotation = 180
+            opacity = 1
+        }
+        onClosed: {
+            downArrowIcon.rotation = 0
+            opacity = 0 
+        }
 
         contentItem: ListView {
             clip: true

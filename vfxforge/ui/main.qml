@@ -159,7 +159,7 @@ ApplicationWindow {
                                 width: 40
                                 height: parent.height                         
                                 
-                                font.pointSize: root.font.pointSize - 3
+                                font.pointSize: root.font.pointSize - 2
                                 
                                 text: "1"
 
