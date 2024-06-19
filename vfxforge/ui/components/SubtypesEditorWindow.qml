@@ -23,11 +23,18 @@ Window {
 
     modality: Qt.WindowModal
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: forceActiveFocus()
+    }
+
+    // Set default subtypes if no subtypes were already set
     Component.onCompleted: {
         if(subtypesModel.count == 0){
             backend.getDefaultAssetSubtypes(currentAssetType).forEach(function(subtype) {
                 subtypesListView.model.add(subtype);
             });
+            subtypeCountTextField.text = String(subtypesListView.model.count)
         }
     }
 
@@ -38,15 +45,107 @@ Window {
 
         Column {
             spacing: 20
-            // anchors.centerIn: parent
             padding: 20
 
             Row {
-                Button {
-                    // width: 200
-                    text: qsTr("Add Subtype")
+                spacing: 3
+
+                bottomPadding: 20
+                
+                property int sectionHeight: 25
+
+                Label {
+                    id: assetSubtypeCountLabel
+                    width: 200
+
+                    text: qsTr("Number of Subtypes")
+                }
+                
+                // Container Item to stick children items together
+                Item {
+                    height: parent.sectionHeight
+                    width: childrenRect.width
+                    anchors.verticalCenter: assetSubtypeCountLabel.verticalCenter
+
+                    // Integer TextField to manually enter required number of Subtypes
+                    VFIntTextField {
+                        id: subtypeCountTextField
+                        width: 40
+                        height: parent.height                         
+                        
+                        font.pointSize: root.font.pointSize - 3
+                        
+                        text: "1"
+
+                        // If subtypes are empty, add an empty subtype
+                        Component.onCompleted: {
+                            if(subtypesListView.model.count == 0){
+                                subtypesListView.model.add();
+                            }  
+                        }
+
+                        onTextEdited: {
+                            subtypesListView.model.clear()
+                            for(var i=0; i < Number(text); i++){
+                                subtypesListView.model.add();
+                            }
+                        }
+                    }
+
+                    // Add a Subtype
+                    VFButton {
+                        id: plusButton
+                        height: parent.height
+                        width: height
+
+                        anchors.left: subtypeCountTextField.right
+
+                        radius: 0
+                        borderWidth: 1 
+
+                        text: "+"
+
+                        onClicked: {
+                            subtypesListView.model.add()
+                            subtypeCountTextField.text = String(Number(subtypeCountTextField.text) + 1)
+                        }
+                    }
+
+                    // Remove a Subtype
+                    VFButton {
+                        height: parent.height
+                        width: height
+    
+                        anchors.left: plusButton.right
+
+                        radius: 0
+                        borderWidth: 1  
+
+                        text: "-"
+
+                        onClicked: {
+                            if(subtypesListView.model.count > 0){
+                                subtypesListView.model.pop()
+                                subtypeCountTextField.text = String(Number(subtypeCountTextField.text) - 1)
+                            }
+                        } 
+                    }
+                }
+
+                // Clear Subtypes
+                VFButton {
+                    height: parent.sectionHeight
+                    width: 75
+                    anchors.verticalCenter: assetSubtypeCountLabel.verticalCenter
+                    
+                    radius: 0
+                    borderWidth: 1 
+
+                    text: qsTr("Clear")
+
                     onClicked: {
-                        subtypesListView.model.add()
+                        subtypesListView.model.clear()
+                        subtypeCountTextField.text = 0
                     }
                 }
             }
@@ -67,27 +166,46 @@ Window {
                         delegate: Column {
                             Row {
                                 
-                                TextField {
+                                VFTextField {
                                     id: subtypeNameTextField
                                     placeholderText: qsTr("Enter subtype name")
+
+                                    width: 200
 
                                     text: name
 
                                     onTextEdited: {
-                                        // subtypesListView.model.setProperty(index, "name", text);
                                         name = text
                                     }
                                 }
 
-                                Button {
+                                VFButton {
                                     id: addVariantButton
-                                    text: qsTr("+")
+                                    text: "+"
                                     width: height
-                                    height: subtypeNameTextField.height + 2
+                                    height: subtypeNameTextField.height
                                     anchors.verticalCenter: subtypeNameTextField.verticalCenter
+
+                                    radius: 0
+                                    borderWidth: 1
 
                                     onClicked: {
                                         variantListView.model.add()
+                                    }
+                                }
+
+                                VFButton {
+                                    id: removeVariantButton
+                                    text: "-"
+                                    width: height
+                                    height: subtypeNameTextField.height
+                                    anchors.verticalCenter: subtypeNameTextField.verticalCenter
+
+                                    radius: 0
+                                    borderWidth: 1
+
+                                    onClicked: {
+                                        variantListView.model.pop()
                                     }
                                 }
                             }
@@ -108,9 +226,11 @@ Window {
                                     delegate: Column {
                                         Row {
                                             
-                                            TextField {
+                                            VFTextField {
                                                 id: subtypeNameTextField
                                                 placeholderText: qsTr("Enter Variant name")
+
+                                                width: 300
 
                                                 text: name
 

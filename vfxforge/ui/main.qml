@@ -89,7 +89,7 @@ ApplicationWindow {
                         projectPathTextField.text = String(selectedFolder).replace("file:///", "");
                     }
                 }
-                Button {
+                VFButton {
                     height: projectPathTextField.height
                     width: 50
                     anchors.verticalCenter: projectPathTextField.verticalCenter
@@ -132,100 +132,97 @@ ApplicationWindow {
                     id: assetSectionColumn
                     width: parent.width
                     
-                    // ADD OR DELETE ASSET BUTTONS
+                    // ADD OR DELETE ASSET CONTROLS
                     Row {
-                        spacing: 0
+                        spacing: 3
 
                         bottomPadding: 20
                         
                         property int sectionHeight: 25
 
                         Label {
+                            id: assetCountLabel
                             width: 200
-                            anchors.verticalCenter: assetCountTextField.verticalCenter
 
                             text: qsTr("Number of Assets")
                         }
+                        
+                        // Container Item to stick children items together
+                        Item {
+                            height: parent.sectionHeight
+                            width: childrenRect.width
+                            anchors.verticalCenter: assetCountLabel.verticalCenter
 
-                        TextField {
-                            id: assetCountTextField
-                            width: 40
-                            height: parent.sectionHeight - 2
-                            horizontalAlignment: TextInput.AlignLeft
-                            verticalAlignment: TextInput.AlignVCenter
-                            leftPadding: 5
-                            
-                            font.pointSize: root.font.pointSize - 3
-                            
-                            rightInset: -2
-                            
+                            // Integer TextField to manually enter required number of Assets
+                            VFIntTextField {
+                                id: assetCountTextField
+                                width: 40
+                                height: parent.height                         
+                                
+                                font.pointSize: root.font.pointSize - 3
+                                
+                                text: "1"
 
-                            validator: IntValidator {bottom: 0; top: 99;}
-                            text: "1"
-
-                            Component.onCompleted: {
-                                assetListView.model.add();
-                            }
-
-                            onTextEdited: {
-                                assetListView.model.clear()
-                                for(var i=0; i < Number(text); i++){
+                                Component.onCompleted: {
                                     assetListView.model.add();
                                 }
-                            }
 
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: Qt.IBeamCursor
-                                onWheel: (wheel) => {
-                                    if (wheel.angleDelta.y > 0) {
-                                        assetCountTextField.text = Math.min(Number(assetCountTextField.text) + 1, 99).toString();
-                                    } else if (wheel.angleDelta.y < 0) {
-                                        assetCountTextField.text = Math.max(Number(assetCountTextField.text) - 1, 0).toString();
+                                onTextEdited: {
+                                    assetListView.model.clear()
+                                    for(var i=0; i < Number(text); i++){
+                                        assetListView.model.add();
                                     }
-                                    assetCountTextField.textEdited()
                                 }
                             }
-                        }
 
-                        Button {
-                            height: parent.sectionHeight
-                            width: height
-                            anchors.verticalCenter: assetCountTextField.verticalCenter
-                            rightInset: -1
-                            
+                            // Add an Asset
+                            VFButton {
+                                id: plusButton
+                                height: parent.height
+                                width: height
 
-                            text: "+"
+                                anchors.left: assetCountTextField.right
 
-                            onClicked: {
-                                assetListView.model.add()
-                                assetCountTextField.text = String(Number(assetCountTextField.text) + 1)
+                                radius: 0
+                                borderWidth: 1 
+
+                                text: "+"
+
+                                onClicked: {
+                                    assetListView.model.add()
+                                    assetCountTextField.text = String(Number(assetCountTextField.text) + 1)
+                                }
+                            }
+
+                            // Remove an Asset
+                            VFButton {
+                                height: parent.height
+                                width: height
+            
+                                anchors.left: plusButton.right
+
+                                radius: 0
+                                borderWidth: 1  
+
+                                text: "-"
+
+                                onClicked: {
+                                    if(assetListView.model.count > 0){
+                                        assetListView.model.pop()
+                                        assetCountTextField.text = String(Number(assetCountTextField.text) - 1)
+                                    }
+                                } 
                             }
                         }
-
-                        Button {
-                            height: parent.sectionHeight
-                            width: height
-                            anchors.verticalCenter: assetCountTextField.verticalCenter
-                            leftInset: -2
-                            leftPadding: 1
-                           
-
-                            text: "-"
-
-                            onClicked: {
-                                if(assetListView.model.count > 0){
-                                    assetListView.model.pop()
-                                    assetCountTextField.text = String(Number(assetCountTextField.text) - 1)
-                                }
-                            } 
-                        }
-
-                        Button {
+     
+                        // Clear Assets
+                        VFButton {
                             height: parent.sectionHeight
                             width: 75
-                            anchors.verticalCenter: assetCountTextField.verticalCenter
+                            anchors.verticalCenter: assetCountLabel.verticalCenter
+                            
+                            radius: 0
+                            borderWidth: 1 
 
                             text: qsTr("Clear")
 
@@ -251,6 +248,7 @@ ApplicationWindow {
 
                                 delegate: Column {
                                     spacing: 10
+                                    leftPadding: 50
                                    
                                     // ASSET TYPE
                                     Row {
@@ -261,7 +259,7 @@ ApplicationWindow {
 
                                             anchors.verticalCenter: assetTypeComboBox.verticalCenter
 
-                                            width: 140
+                                            width: 200
 
                                             text: qsTr("Asset Type")
                                         }
@@ -269,12 +267,12 @@ ApplicationWindow {
                                         VFComboBox {
                                             id: assetTypeComboBox
 
-                                            width: 200
+                                            width: 300
                                             height: assetTypeLabel.height + 10
 
                                             model: backend !== null ? backend.assetTypes : []
                                             onCurrentTextChanged: {
-                                                // Set the roles defined in AssetListModel
+                                                // Set the roles defined in QAssetListModel
                                                 name = assetNameTextField.text
                                                 type = currentText
                                                 subtypes.clear()
@@ -287,7 +285,7 @@ ApplicationWindow {
                                         spacing: 10
 
                                         Label {
-                                            width: 140
+                                            width: 200
 
                                             anchors.verticalCenter: assetNameTextField.verticalCenter
 
@@ -297,27 +295,25 @@ ApplicationWindow {
                                         VFTextField {
                                             id: assetNameTextField
                                             
-                                            width: 200
+                                            width: 300
 
                                             placeholderText: qsTr("Enter asset name")
                                             validator: RegularExpressionValidator { regularExpression: /[a-zA-Z]*/}
                                             onEditingFinished: {
-                                                // Set the roles defined in AssetListModel
+                                                // Set the roles defined in QAssetListModel
                                                 name = text
                                                 type = assetTypeComboBox.currentText
                                             }
                                         }
                                     }
 
+                                    //EDIT SUBTYPES AND VARIANTS
                                     Row {
-                                        Button {
+                                        VFButton {
                                             text: qsTr("Edit Subtypes and Variants")                                       
 
-                                            onClicked: {
-                                                // subtypesEditorWindow.visible = true
-                                                
-                                                subtypesEditorLoader.active = true
-                                                
+                                            onClicked: {                                         
+                                                subtypesEditorLoader.active = true            
                                             }
                                         }                                        
                                     }
@@ -334,9 +330,11 @@ ApplicationWindow {
                                             x: root.x + root.width / 2 - width / 2
                                             y: root.y + root.height / 2 - height / 2
 
+                                            //Pass current asset name and type via the roles of QAssetListModel
                                             currentAssetName: name
                                             currentAssetType: type
 
+                                            //subtypes is also a role in QAssetListModel of type QAssetSubtypeListModel.
                                             subtypesModel: subtypes
 
                                             onClosing: {
@@ -351,8 +349,9 @@ ApplicationWindow {
                 }
             }
 
+            //Create Project
             Row {
-                Button {
+                VFButton {
                     text: qsTr("Create")
                     onClicked: {
                         if (projectNameTextField.text === "" || projectPathTextField.text === ""){

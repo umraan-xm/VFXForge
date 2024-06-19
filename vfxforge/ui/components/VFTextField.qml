@@ -3,9 +3,9 @@ import QtQuick.Controls 2.15
 // import QtQuick.Controls.Basic
 
 TextField {
-        id: root
+        id: control
 
-        width: parent.width 
+        // width: parent.width 
 
         background: Rectangle {
             
@@ -40,9 +40,9 @@ TextField {
         }
 
         onActiveFocusChanged: {
-                if (root.activeFocus) {
+                if (control.activeFocus) {
                     highlight.width = underline.width
-                } else if (root.text === "") {
+                } else if (control.text === "") {
                     highlight.width = 0
                 }
             }
