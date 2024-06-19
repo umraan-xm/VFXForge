@@ -11,6 +11,9 @@ class ProjectBuilder:
     WIP = 'wip'
     PUBLISHED = 'published'
     VERSIONS = 'versions'
+    IO = 'IO'
+    INCOMING = 'incoming'
+    OUTGOING = 'outgoing'
 
     def __init__(self, name: str, path: str, project_type: str, settings: Settings) -> None:
         self.name = name
@@ -21,6 +24,11 @@ class ProjectBuilder:
     def _create_directory(self, path: str):
         logger.debug(f"Creating Directory. {path}")
         os.makedirs(path, exist_ok=True)
+
+    def _create_io_directories(self, path):
+        io_path = os.path.join(path, self.IO)
+        self._create_directory(os.path.join(io_path, self.INCOMING))
+        self._create_directory(os.path.join(io_path, self.OUTGOING))
 
     def _create_wip_directory(self, path: str):
         self._create_directory(os.path.join(path, self.WIP))
@@ -56,7 +64,9 @@ class ProjectBuilder:
         for directory in base_dirs:
             self._create_directory(os.path.join(self.path, directory))
 
-    def add_asset(self, name: str, asset_type: str, subtypes: List[Tuple[str, List[str]]]=None) -> str:
+        self._create_io_directories(self.path)
+
+    def add_asset(self, name: str, asset_type: str) -> str:
         asset_type_dir = self.settings.get_asset_type_dir_name(asset_type=asset_type)
         asset_path = os.path.join(self.path, ProjectBuilder.ASSET, asset_type_dir, name)
 
