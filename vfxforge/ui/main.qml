@@ -8,13 +8,18 @@ import QtQml.Models
 
 import "./components"
 
+
 ApplicationWindow {
     id: root
     visible: true
     width: 1280
     height: 720
-    minimumWidth: 640
-    minimumHeight: 480
+
+    readonly property int margin: 15
+
+    minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
+    minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
+
     title: 'VFXForge'
 
     font.pointSize: 12
@@ -25,139 +30,202 @@ ApplicationWindow {
         onClicked: forceActiveFocus()
     }
 
-    Rectangle {
-        width: parent.width
-        height: parent.height
-        // color: "grey"
+    ColumnLayout {
+        id: mainLayout
 
-        Component.onCompleted: {
-            // Preload the ComboBox popup
-            projectTypeComboBox.popup.visible = true
-            projectTypeComboBox.popup.visible = false
+        anchors.fill: parent // If the size of the Layout is not set it will not reposition or resize elements. Do not set this if the parent is also a layout and has this property.
+        anchors.margins: root.margin
+        
+        Rectangle {
+            Layout.fillWidth: true // Resize the Rectangle given the below constraints.
+
+            /*
+                Layouts calculate implicit minimum and maximum from their child items.
+                Every other item has an implicit minimum of 0 and implicit maximum of  Infinity
+            */
+            Layout.minimumHeight: projectDetailsColumnLayout.Layout.minimumHeight + 60 //constraints simply stop resizing but the window may still crop out the element.
+            Layout.minimumWidth: projectDetailsColumnLayout.Layout.minimumWidth
+
+            Component.onCompleted: {
+                // Preload the ComboBox popup
+                projectTypeComboBox.popup.visible = true
+                projectTypeComboBox.popup.visible = false
+            }    
+
+            // color: Qt.rgba(1, 0, 0, 0.2)
+
+            ColumnLayout {
+                id: projectDetailsColumnLayout
+
+                anchors.fill: parent
+                anchors.right: undefined
+
+                readonly property int labelWidth: 100
+                readonly property int textFieldWidth: 500
+                readonly property int rowSpacing: 20
+
+                spacing: 15
+
+                RowLayout {
+                    id: projectNameRowLayout
+                    
+                    spacing: projectDetailsColumnLayout.rowSpacing
+
+                    Label {
+                        /*
+                            If the Layout can resize (eg: Layout.fillWidth: true), then this property acts as a ratio while resizing
+
+                            If two elements have this value set, then while resizing the Layout will try to keep the ratio of the two values
+                            until it exceeds its minimum and maximum constraints.
+
+                            While resizing if the size of the componenet goes below this value then the ratio will no longer be maintained. The size will go down to its minimum constraint
+                        */
+                        Layout.preferredWidth: projectDetailsColumnLayout.labelWidth // Since fillWidth is not set, this property just determines the width of the element
+
+                        verticalAlignment: Text.AlignVCenter
+
+                        text: qsTr("Project Name")
+                    }
+
+                    VFTextField {
+                        id: projectNameTextField
+
+                        Layout.fillWidth: true
+
+                        placeholderText: qsTr("Enter a project name")
+                        
+                    }
+                }
+
+                RowLayout {
+                    id: projectPathRowLayout
+                    
+                    spacing: projectDetailsColumnLayout.rowSpacing
+
+                    Label {
+                        Layout.preferredWidth: projectDetailsColumnLayout.labelWidth
+
+                        verticalAlignment: Text.AlignVCenter
+
+                        text: qsTr("Project Path")
+                    }
+
+                    VFTextField {
+                        id: projectPathTextField
+
+                        Layout.fillWidth: true
+
+                        placeholderText: qsTr("Enter directory to place your project")
+                       
+                    }
+                    
+                    FolderDialog {
+                        id: projectPathFolderDialog
+
+                        title: qsTr("Select Project Path")
+
+                        onAccepted: {
+                            projectPathTextField.text = String(selectedFolder).replace("file:///", "");
+                        }
+                    }
+
+                    VFButton {
+                        Layout.preferredWidth: 50
+
+                        text: "..."
+
+                        onClicked: {
+                            projectPathFolderDialog.open()
+                        }
+                    }
+                }
+
+                RowLayout {
+
+                    spacing: projectDetailsColumnLayout.rowSpacing
+
+                    Label {
+                        Layout.preferredWidth: projectDetailsColumnLayout.labelWidth
+
+                        verticalAlignment: Text.AlignVCenter
+
+                        text: qsTr("Project Type")
+                    }
+                    VFComboBox {
+                        id: projectTypeComboBox
+
+                        Layout.preferredWidth: 200
+                        Layout.preferredHeight: 35
+                        
+                        model: backend !== null ? backend.projectTypes : []
+                    }
+                }
+            }
         }
 
-        Column {
-            id: projectDetailsColumn
-
-            anchors {
-                centerIn: parent
-                fill: parent
-                margins: 50
-            }
-            spacing: 20
-        
-            // color: "red"
-            property real textFieldWidth: 600
-            
-
-            // PROJECT NAME
-            Row {
-                spacing: 10
-                Label {
-                    text: qsTr("Project Name")
-
-                    anchors.verticalCenter: projectNameTextField.verticalCenter
-
-                    width: 150
-                }
-                VFTextField {
-                    id: projectNameTextField
-                    placeholderText: qsTr("Enter a project name")
-                    width: projectDetailsColumn.textFieldWidth
-                }
-            }
-
-            // PROJECT PATH
-            Row {
-                spacing: 10
-                Label {
-                    text: qsTr("Project Path")
-
-                    anchors.verticalCenter: projectPathTextField.verticalCenter
-
-                    width: 150
-                }
-                VFTextField {
-                    id: projectPathTextField
-                    placeholderText: qsTr("Enter directory to place your project")
-                    width: projectDetailsColumn.textFieldWidth
-                }
-                FolderDialog {
-                    id: projectPathFolderDialog
-                    title: qsTr("Select Project Path")
-                    onAccepted: {
-                        projectPathTextField.text = String(selectedFolder).replace("file:///", "");
-                    }
-                }
-                VFButton {
-                    height: projectPathTextField.height
-                    width: 50
-                    anchors.verticalCenter: projectPathTextField.verticalCenter
-                    text: "..."
-                    onClicked: {
-                        projectPathFolderDialog.open()
-                    }
-                }
-            }
-
-            // PROJECT TYPE
-            Row {
-                spacing: 10
-                Label {
-                    id: projectTypeLabel
-
-                    text: qsTr("Project Type")
-                    anchors.verticalCenter: projectTypeComboBox.verticalCenter
-                    width: 150
-                }
-                VFComboBox {
-                    id: projectTypeComboBox
-                    width: 200
-                    height: projectTypeLabel.height + 20
-                    // focusPolicy: Qt.NoFocus
-                    model: backend !== null ? backend.projectTypes : []
-                }
-            }
-
-            ToolSeparator {
+        ToolSeparator {
                 orientation: Qt.Horizontal
-                width: parent.width - parent.anchors.margins/2
+                
+                Layout.fillWidth: true
             }
 
-            // ASSET SECTION
-            Row {
-                id: assetSectionRow
-                width: parent.width
-                Column {
-                    id: assetSectionColumn
-                    width: parent.width
-                    
-                    // ADD OR DELETE ASSET CONTROLS
-                    Row {
-                        spacing: 3
+        TabBar {
+            id: mainTabBar
 
-                        bottomPadding: 20
-                        
-                        property int sectionHeight: 25
+            Layout.fillWidth: true
+
+            VFTabButton {
+                
+
+                text: qsTr("Assets")
+            }
+
+            VFTabButton {
+                
+
+                text: qsTr("Sequences")
+            }
+        }
+
+        StackLayout {
+            Layout.minimumWidth: assetsColumnLayout.implicitWidth + 20
+            Layout.margins: 10
+
+            currentIndex: mainTabBar.currentIndex
+
+            // StackLayout sets Layout.fillWidth and fillHeight as defaults to its child items
+            Rectangle {
+                
+                ColumnLayout {
+                    id: assetsColumnLayout
+                    anchors.fill: parent
+                    anchors.right: undefined
+
+                    RowLayout {
+                        id: assetCountRowLayout
+
+                        readonly property int buttonHeight: 25
+
+                        spacing: 5
 
                         Label {
                             id: assetCountLabel
-                            width: 200
+
+                            Layout.rightMargin: 40
+                            
+                            verticalAlignment: Text.AlignVCenter
 
                             text: qsTr("Number of Assets")
                         }
-                        
-                        // Container Item to stick children items together
-                        Item {
-                            height: parent.sectionHeight
-                            width: childrenRect.width
-                            anchors.verticalCenter: assetCountLabel.verticalCenter
 
-                            // Integer TextField to manually enter required number of Assets
+                        RowLayout {
+                            spacing: 0
+
                             VFIntTextField {
                                 id: assetCountTextField
-                                width: 40
-                                height: parent.height                         
+
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: assetCountRowLayout.buttonHeight                        
                                 
                                 font.pointSize: root.font.pointSize - 2
                                 
@@ -176,12 +244,9 @@ ApplicationWindow {
                             }
 
                             // Add an Asset
-                            VFButton {
-                                id: plusButton
-                                height: parent.height
-                                width: height
-
-                                anchors.left: assetCountTextField.right
+                            VFButton {  
+                                Layout.preferredHeight: assetCountRowLayout.buttonHeight  
+                                Layout.preferredWidth: Layout.preferredHeight
 
                                 radius: 0
                                 borderWidth: 1 
@@ -196,10 +261,8 @@ ApplicationWindow {
 
                             // Remove an Asset
                             VFButton {
-                                height: parent.height
-                                width: height
-            
-                                anchors.left: plusButton.right
+                                Layout.preferredHeight: assetCountRowLayout.buttonHeight  
+                                Layout.preferredWidth: Layout.preferredHeight
 
                                 radius: 0
                                 borderWidth: 1  
@@ -214,12 +277,13 @@ ApplicationWindow {
                                 } 
                             }
                         }
-     
+
                         // Clear Assets
                         VFButton {
-                            height: parent.sectionHeight
-                            width: 75
-                            anchors.verticalCenter: assetCountLabel.verticalCenter
+                            Layout.preferredHeight: assetCountRowLayout.buttonHeight 
+
+                            Layout.fillWidth: true
+                            Layout.maximumWidth: implicitWidth * 2
                             
                             radius: 0
                             borderWidth: 1 
@@ -233,112 +297,125 @@ ApplicationWindow {
                         }
                     }
 
-                    // DISPLAY ASSETS
-                    Row {
+                    RowLayout {
+
+                        Layout.margins: 20
+
                         ScrollView {
-                            width: assetSectionColumn.width
-                            // anchors.fill: parent
-                            height: root.height - root.height/2
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
                             clip: true
-                            
+
                             ListView {
                                 id: assetListView
                                 model: assetListModel
-                                spacing: 20
-
-                                delegate: Column {
-                                    spacing: 10
-                                    leftPadding: 50
+                        
+                                delegate: Rectangle {
                                    
-                                    // ASSET TYPE
-                                    Row {
-                                        spacing: 10
+                                    height: 150
+                                    width: contentItem.width
+                                    
 
-                                        Label {
-                                            id: assetTypeLabel
+                                    ColumnLayout {
+                                        id: assetDelegateColumnLayout
+                                        anchors.fill: parent
 
-                                            anchors.verticalCenter: assetTypeComboBox.verticalCenter
+                                        readonly property int labelWidth: 100
+                                        
+                                        spacing: 5
 
-                                            width: 200
+                                        RowLayout {
 
-                                            text: qsTr("Asset Type")
-                                        }
+                                            Label {
+                                                Layout.preferredWidth: assetDelegateColumnLayout.labelWidth
 
-                                        VFComboBox {
-                                            id: assetTypeComboBox
+                                                Layout.rightMargin: 40
 
-                                            width: 300
-                                            height: assetTypeLabel.height + 10
+                                                verticalAlignment: Text.AlignVCenter
 
-                                            model: backend !== null ? backend.assetTypes : []
-                                            onCurrentTextChanged: {
-                                                // Set the roles defined in QAssetListModel
-                                                name = assetNameTextField.text
-                                                type = currentText
-                                                subtypes.clear()
+                                                text: qsTr("Asset Type")
+                                            }
+
+                                            VFComboBox {
+                                                id: assetTypeComboBox
+
+                                                Layout.fillWidth: true
+                                                Layout.maximumWidth: 200
+
+                                                Layout.preferredHeight: 35                                                                                            
+
+                                                model: backend !== null ? backend.assetTypes : []
+                                                onCurrentTextChanged: {
+                                                    // Set the roles defined in QAssetListModel
+                                                    name = assetNameTextField.text
+                                                    type = currentText
+                                                    subtypes.clear()
+                                                }
                                             }
                                         }
-                                    }
 
-                                    // ASSET NAME
-                                    Row {
-                                        spacing: 10
-
-                                        Label {
-                                            width: 200
-
-                                            anchors.verticalCenter: assetNameTextField.verticalCenter
-
-                                            text: qsTr("Asset Name")
-                                        }
-
-                                        VFTextField {
-                                            id: assetNameTextField
+                                        RowLayout {
                                             
-                                            width: 300
+                                            Label {
+                                                Layout.preferredWidth: assetDelegateColumnLayout.labelWidth
 
-                                            placeholderText: qsTr("Enter asset name")
-                                            validator: RegularExpressionValidator { regularExpression: /[a-zA-Z]*/}
-                                            onEditingFinished: {
-                                                // Set the roles defined in QAssetListModel
-                                                name = text
-                                                type = assetTypeComboBox.currentText
+                                                Layout.rightMargin: 40
+
+                                                verticalAlignment: Text.AlignVCenter
+
+                                                text: qsTr("Asset Name")
+                                            }
+
+                                            VFTextField {
+                                                id: assetNameTextField
+                                                
+                                                Layout.fillWidth: true
+                                                Layout.maximumWidth: 300
+
+                                                placeholderText: qsTr("Enter asset name")
+                                                validator: RegularExpressionValidator { regularExpression: /[a-zA-Z]*/}
+                                                onEditingFinished: {
+                                                    // Set the roles defined in QAssetListModel
+                                                    name = text
+                                                    type = assetTypeComboBox.currentText
+                                                }
                                             }
                                         }
-                                    }
 
-                                    //EDIT SUBTYPES AND VARIANTS
-                                    Row {
-                                        VFButton {
-                                            text: qsTr("Edit Subtypes and Variants")                                       
+                                        RowLayout {
+                                            Layout.bottomMargin: 30
+                                            VFButton {
+                                                text: qsTr("Edit Subtypes and Variants")                                       
 
-                                            onClicked: {                                         
-                                                subtypesEditorLoader.active = true            
-                                            }
-                                        }                                        
-                                    }
+                                                onClicked: {                                         
+                                                    subtypesEditorLoader.active = true            
+                                                }
+                                            }                                        
+                                        }
 
-                                    //Loader to display subtypes and variants window for a particular asset
-                                    Loader { 
-                                        id: subtypesEditorLoader
-                                        active: false
+                                        //Loader to display subtypes and variants window for a particular asset
+                                        Loader { 
+                                            id: subtypesEditorLoader
+                                            active: false
 
-                                        sourceComponent: SubtypesEditorWindow {
-                                            id: subtypesEditorWindow
-                                            visible: true
+                                            sourceComponent: SubtypesEditorWindow {
+                                                id: subtypesEditorWindow
+                                                visible: true
 
-                                            x: root.x + root.width / 2 - width / 2
-                                            y: root.y + root.height / 2 - height / 2
+                                                x: root.x + root.width / 2 - width / 2
+                                                y: root.y + root.height / 2 - height / 2
 
-                                            //Pass current asset name and type via the roles of QAssetListModel
-                                            currentAssetName: name
-                                            currentAssetType: type
+                                                //Pass current asset name and type via the roles of QAssetListModel
+                                                currentAssetName: name
+                                                currentAssetType: type
 
-                                            //subtypes is also a role in QAssetListModel of type QAssetSubtypeListModel.
-                                            subtypesModel: subtypes
+                                                //subtypes is also a role in QAssetListModel of type QAssetSubtypeListModel.
+                                                subtypesModel: subtypes
 
-                                            onClosing: {
-                                                subtypesEditorLoader.active = false
+                                                onClosing: {
+                                                    subtypesEditorLoader.active = false
+                                                }
                                             }
                                         }
                                     }
@@ -349,21 +426,26 @@ ApplicationWindow {
                 }
             }
 
-            //Create Project
-            Row {
-                VFButton {
-                    text: qsTr("Create")
-                    onClicked: {
-                        if (projectNameTextField.text === "" || projectPathTextField.text === ""){
-                            errorMessageDialog.informativeText = qsTr("Project Name and Path cannot be empty!");
-                            errorMessageDialog.open();
-                        } else if (!assetListView.model.isValid){
-                            errorMessageDialog.informativeText = qsTr("Please enter asset names");
-                            errorMessageDialog.open();
-                        } else{
-                            backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.items);
-                        }
-                    }
+            Rectangle {
+                // Layout.fillWidth: true
+                // Layout.fillHeight: true
+                color: "red"
+            }
+        }
+
+        VFButton {
+            Layout.preferredWidth: 100
+
+            text: qsTr("Create")
+            onClicked: {
+                if (projectNameTextField.text === "" || projectPathTextField.text === ""){
+                    errorMessageDialog.informativeText = qsTr("Project Name and Path cannot be empty!");
+                    errorMessageDialog.open();
+                } else if (!assetListView.model.isValid){
+                    errorMessageDialog.informativeText = qsTr("Please enter asset names");
+                    errorMessageDialog.open();
+                } else{
+                    backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.items);
                 }
             }
         }

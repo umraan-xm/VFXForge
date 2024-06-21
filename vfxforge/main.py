@@ -15,7 +15,7 @@ from core.project_builder import ProjectBuilder
 from settings import JSONSettings, Settings
 import constants
 
-from models.asset import QAssetListModel, QAsset, QAssetSubtypeListModel, QAssetSubtype
+from models.asset import QAssetListModel, QAsset
 
 
 class Backend(qtc.QObject):

@@ -5,6 +5,7 @@ ComboBox {
     id: control
 
     // focusPolicy: Qt.NoFocus
+    implicitHeight: popup.contentItem.implicitHeight + 30
 
     indicator: Image {
             id: downArrowIcon
@@ -21,8 +22,8 @@ ComboBox {
 
             Behavior on rotation {
                 RotationAnimation {
-                    duration: 400
-                    easing.type: Easing.InOutQuad
+                    duration: 350
+                    easing.type: Easing.Linear
                 }
             }
         }

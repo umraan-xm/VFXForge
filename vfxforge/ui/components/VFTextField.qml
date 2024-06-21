@@ -26,7 +26,7 @@ TextField {
                 anchors.bottom: parent.bottom
 
                 height: 2
-                width: 0
+                width: control.activeFocus ? underline.width : 0
 
                 color: "#007bff"
 
