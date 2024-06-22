@@ -1,3 +1,11 @@
-JSON_SETTINGS_FILEPATH = "vfxforge/database/settings.json"
+import os
 
-MAIN_QML_FILEPATH = "vfxforge/ui/main.qml"
+BASE_DIR = "vfxforge"
+
+UI_DIR = os.path.join(BASE_DIR, "ui")
+
+DATABASE_DIR = os.path.join(BASE_DIR, "database")
+
+JSON_SETTINGS_FILEPATH = os.path.join(DATABASE_DIR, "settings.json")
+
+MAIN_QML_FILEPATH = os.path.join(UI_DIR, "main.qml")

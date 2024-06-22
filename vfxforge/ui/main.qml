@@ -600,37 +600,6 @@ ApplicationWindow {
                                                 text: qsTr("Number of Shots")
                                             }
 
-                                            // SpinBox {
-                                            //     id: sequenceShotsSpinBox
-                                                
-                                            //     Layout.fillWidth: true
-                                            //     Layout.maximumWidth: 300
-
-                                            //     editable: true
-                                            //     from: 1
-                                            //     live: true
-
-                                            //     contentItem: TextInput {
-                                            //         text: sequenceShotsSpinBox.textFromValue(sequenceShotsSpinBox.value, sequenceShotsSpinBox.locale)
-                                            //         font: sequenceShotsSpinBox.font
-                                            //         horizontalAlignment: Qt.AlignHCenter
-                                            //         verticalAlignment: Qt.AlignVCenter
-                                            //         readOnly: !sequenceShotsSpinBox.editable
-                                            //         validator: sequenceShotsSpinBox.validator
-                                            //         inputMethodHints: Qt.ImhFormattedNumbersOnly
-                                            //         onTextChanged: {
-                                                        
-                                            //             sequenceShotsSpinBox.value =  parseInt(text);
-                                            //             sequenceShotsSpinBox.valueModified()
-                                            //         }
-                                            //     }
-
-                                            //     onValueModified: {
-                                            //         console.log(value)
-                                            //         shots = value
-                                            //     }
-                                            // }
-
                                             RowLayout {
                                                 id: shotCountRowLayout
 
@@ -711,7 +680,10 @@ ApplicationWindow {
                 } else if (!assetListView.model.isValid){
                     errorMessageDialog.informativeText = qsTr("Please enter asset names");
                     errorMessageDialog.open();
-                } else{
+                } else if (!sequenceListView.model.isValid){
+                    errorMessageDialog.informativeText = qsTr("Please enter sequence names");
+                    errorMessageDialog.open(); 
+                } else {
                     backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.items, sequenceListView.model.items);
                 }
             }
