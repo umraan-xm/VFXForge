@@ -14,6 +14,7 @@ class ProjectBuilder:
     IO = 'IO'
     INCOMING = 'incoming'
     OUTGOING = 'outgoing'
+    SEQUENCE = 'sequence'
 
     def __init__(self, name: str, path: str, project_type: str, settings: Settings) -> None:
         self.name = name
@@ -48,10 +49,17 @@ class ProjectBuilder:
     def _create_published_directory(self, path: str):
         self._create_directory(os.path.join(path, self.PUBLISHED))
 
-    def _create_working_folders(self, path: str):
+    def _create_asset_working_folders(self, path: str):
         self._create_published_directory(path)
         self._create_versions_directory(path)
         self._create_wip_directory(path)
+
+    def _create_shot_working_folders(self, path: str):
+        self._create_published_directory(path)
+        self._create_wip_directory(path)
+
+    def _generate_shot_names(self, prefix: str, shots: int) -> List[str]:
+        return [f"{prefix}{i*10:03}" for i in range(shots + 1)]
 
     def matches(self, name: str, path: str) -> bool:
         return self.path == os.path.join(path, name)
@@ -85,6 +93,19 @@ class ProjectBuilder:
 
                 self._create_directory(variant_path)
 
-                self._create_working_folders(variant_path)
+                self._create_asset_working_folders(variant_path)
         else:
-            self._create_working_folders(subtype_path)
+            self._create_asset_working_folders(subtype_path)
+
+    def add_sequence(self, name: str, shots: int):
+        sequence_path = os.path.join(self.path, self.SEQUENCE, name)
+
+        self._create_directory(sequence_path)
+
+        shot_names = self._generate_shot_names(prefix=name, shots=shots)
+        for shot_name in shot_names:
+            shot_path = os.path.join(sequence_path, shot_name)
+            self._create_directory(shot_path)
+            self._create_shot_working_folders(shot_path)
+        
+

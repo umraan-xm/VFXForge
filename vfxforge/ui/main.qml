@@ -307,6 +307,8 @@ ApplicationWindow {
 
                             clip: true
 
+                            // ScrollBar.vertical.interactive: true
+
                             ListView {
                                 id: assetListView
                                 model: assetListModel
@@ -427,9 +429,274 @@ ApplicationWindow {
             }
 
             Rectangle {
-                // Layout.fillWidth: true
-                // Layout.fillHeight: true
-                color: "red"
+
+                ColumnLayout {
+                    id: sequencesColumnLayout
+                    anchors.fill: parent
+                    anchors.right: undefined
+
+                    RowLayout {
+                        id: sequenceCountRowLayout
+
+                        readonly property int buttonHeight: 25
+
+                        spacing: 5
+
+                        Label {
+                            Layout.rightMargin: 40
+                            
+                            verticalAlignment: Text.AlignVCenter
+
+                            text: qsTr("Number of Sequences")
+                        }
+
+                        RowLayout {
+                            spacing: 0
+
+                            VFIntTextField {
+                                id: sequenceCountTextField
+
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: sequenceCountRowLayout.buttonHeight                        
+                                
+                                font.pointSize: root.font.pointSize - 2
+                                
+                                text: "1"
+
+                                Component.onCompleted: {
+                                    sequenceListView.model.add();
+                                }
+
+                                onTextEdited: {
+                                    sequenceListView.model.clear()
+                                    for(var i=0; i < Number(text); i++){
+                                        sequenceListView.model.add();
+                                    }
+                                }
+                            }
+
+                            // Add a Sequence
+                            VFButton {  
+                                Layout.preferredHeight: sequenceCountRowLayout.buttonHeight  
+                                Layout.preferredWidth: Layout.preferredHeight
+
+                                radius: 0
+                                borderWidth: 1 
+
+                                text: "+"
+
+                                onClicked: {
+                                    sequenceListView.model.add()
+                                    sequenceCountTextField.text = String(Number(sequenceCountTextField.text) + 1)
+                                }
+                            }
+
+                            // Remove a Sequence
+                            VFButton {
+                                Layout.preferredHeight: sequenceCountRowLayout.buttonHeight  
+                                Layout.preferredWidth: Layout.preferredHeight
+
+                                radius: 0
+                                borderWidth: 1  
+
+                                text: "-"
+
+                                onClicked: {
+                                    if(sequenceListView.model.count > 0){
+                                        sequenceListView.model.pop()
+                                        sequenceCountTextField.text = String(Number(sequenceCountTextField.text) - 1)
+                                    }
+                                } 
+                            }
+                        }
+
+                        // Clear Sequences
+                        VFButton {
+                            Layout.preferredHeight: sequenceCountRowLayout.buttonHeight 
+
+                            Layout.fillWidth: true
+                            Layout.maximumWidth: implicitWidth * 2
+                            
+                            radius: 0
+                            borderWidth: 1 
+
+                            text: qsTr("Clear")
+
+                            onClicked: {
+                                sequenceListView.model.clear()
+                                sequenceCountTextField.text = 0
+                            }
+                        }
+                    }
+
+                    RowLayout {
+
+                        Layout.margins: 20
+
+                        ScrollView {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
+                            clip: true
+
+                            // ScrollBar.vertical.interactive: true
+
+                            ListView {
+                                id: sequenceListView
+                                model: sequenceListModel
+                        
+                                delegate: Rectangle {
+                                   
+                                    height: 100
+                                    width: contentItem.width
+                                    
+                                    ColumnLayout {
+                                        id: sequenceDelegateColumnLayout
+                                        anchors.fill: parent
+
+                                        readonly property int labelWidth: 100
+                                        
+                                        spacing: 5
+
+                                        RowLayout {
+                                            
+                                            Label {
+                                                Layout.preferredWidth: sequenceDelegateColumnLayout.labelWidth
+
+                                                Layout.rightMargin: 40
+
+                                                verticalAlignment: Text.AlignVCenter
+
+                                                text: qsTr("Sequence Name")
+                                            }
+
+                                            VFTextField {
+                                                id: sequenceNameTextField
+                                                
+                                                Layout.fillWidth: true
+                                                Layout.maximumWidth: 300
+
+                                                placeholderText: qsTr("Enter sequence name")
+                                                validator: RegularExpressionValidator { regularExpression: /[a-zA-Z]*/}
+                                                onEditingFinished: {
+                                                    // Set the roles defined in QAssetListModel
+                                                    name = text
+                                                    // type = assetTypeComboBox.currentText
+                                                }
+                                            }
+                                        }
+
+                                        RowLayout {
+
+                                            Layout.bottomMargin: 30
+                                            
+                                            Label {
+                                                Layout.preferredWidth: sequenceDelegateColumnLayout.labelWidth
+
+                                                Layout.rightMargin: 40
+
+                                                verticalAlignment: Text.AlignVCenter
+
+                                                text: qsTr("Number of Shots")
+                                            }
+
+                                            // SpinBox {
+                                            //     id: sequenceShotsSpinBox
+                                                
+                                            //     Layout.fillWidth: true
+                                            //     Layout.maximumWidth: 300
+
+                                            //     editable: true
+                                            //     from: 1
+                                            //     live: true
+
+                                            //     contentItem: TextInput {
+                                            //         text: sequenceShotsSpinBox.textFromValue(sequenceShotsSpinBox.value, sequenceShotsSpinBox.locale)
+                                            //         font: sequenceShotsSpinBox.font
+                                            //         horizontalAlignment: Qt.AlignHCenter
+                                            //         verticalAlignment: Qt.AlignVCenter
+                                            //         readOnly: !sequenceShotsSpinBox.editable
+                                            //         validator: sequenceShotsSpinBox.validator
+                                            //         inputMethodHints: Qt.ImhFormattedNumbersOnly
+                                            //         onTextChanged: {
+                                                        
+                                            //             sequenceShotsSpinBox.value =  parseInt(text);
+                                            //             sequenceShotsSpinBox.valueModified()
+                                            //         }
+                                            //     }
+
+                                            //     onValueModified: {
+                                            //         console.log(value)
+                                            //         shots = value
+                                            //     }
+                                            // }
+
+                                            RowLayout {
+                                                id: shotCountRowLayout
+
+                                                readonly property int itemHeight: 35
+
+                                                spacing: 0
+
+                                                VFIntTextField {
+                                                    id: shotCountTextField
+
+                                                    Layout.preferredWidth: 80
+                                                    Layout.preferredHeight: shotCountRowLayout.itemHeight                        
+                                                    
+                                                    font.pointSize: root.font.pointSize - 2
+                                                    
+                                                    text: "1"
+                                                    
+                                                    onTextEdited: {
+                                                        if(Number(text) == 0){
+                                                            shotCountTextField.text = "1"
+                                                        }
+                                                        shots = Number(text)
+                                                    }
+                                                }
+
+                                                VFButton {  
+                                                    Layout.preferredHeight: shotCountRowLayout.itemHeight   
+                                                    Layout.preferredWidth: Layout.preferredHeight
+
+                                                    radius: 0
+                                                    borderWidth: 1 
+
+                                                    text: "+"
+
+                                                    onClicked: {
+                                                        shotCountTextField.text = String(Number(shotCountTextField.text) + 1)
+                                                    }
+                                                }
+
+                                                VFButton {
+                                                    Layout.preferredHeight: shotCountRowLayout.itemHeight     
+                                                    Layout.preferredWidth: Layout.preferredHeight
+
+                                                    radius: 0
+                                                    borderWidth: 1  
+
+                                                    text: "-"
+
+                                                    onClicked: {
+                                                        if(Number(shotCountTextField.text) > 1){
+                                                            shotCountTextField.text = String(Number(shotCountTextField.text) - 1)
+                                                        }
+                                                    } 
+                                                }
+                                            }
+                                        }
+
+                                        
+
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -445,7 +712,7 @@ ApplicationWindow {
                     errorMessageDialog.informativeText = qsTr("Please enter asset names");
                     errorMessageDialog.open();
                 } else{
-                    backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.items);
+                    backend.createProject(projectPathTextField.text, projectNameTextField.text, projectTypeComboBox.currentText, assetListView.model.items, sequenceListView.model.items);
                 }
             }
         }

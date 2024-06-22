@@ -16,6 +16,7 @@ from settings import JSONSettings, Settings
 import constants
 
 from models.asset import QAssetListModel, QAsset
+from models.sequence import QSequenceListModel, QSequence
 
 
 class Backend(qtc.QObject):
@@ -36,8 +37,8 @@ class Backend(qtc.QObject):
     def getDefaultAssetSubtypes(self, asset_type: str):
         return self.settings.get_default_asset_subtypes(asset_type=asset_type)
 
-    @qtc.pyqtSlot(str, str, str, list)
-    def createProject(self, project_path: str, project_name: str, project_type: str, assets: List[QAsset]):
+    @qtc.pyqtSlot(str, str, str, list, list)
+    def createProject(self, project_path: str, project_name: str, project_type: str, assets: List[QAsset], sequences: List[QSequence]):
         logger.info(f"Creating project at {project_path} with name {project_name} and type {project_type}")
 
         if not self.project_builder or not self.project_builder.matches(name=project_name, path=project_path):
@@ -58,6 +59,13 @@ class Backend(qtc.QObject):
 
                         self.project_builder.add_asset_subtype(asset_path=asset_path, name=subtype.name, variants=map(str, subtype.variants.items))
 
+        if sequences:
+            logger.info(f"Project contains {len(sequences)} sequences.")
+            for sequence in sequences:
+                logger.info(sequence)
+
+                self.project_builder.add_sequence(name=sequence.name, shots=sequence.shots)
+
 
         logger.info(f"Project '{project_name}' created successfully at {self.project_builder.path}.")
 
@@ -74,6 +82,9 @@ def main():
 
     assetListModel = QAssetListModel()
     engine.rootContext().setContextProperty('assetListModel', assetListModel)
+
+    sequenceListModel = QSequenceListModel()
+    engine.rootContext().setContextProperty('sequenceListModel', sequenceListModel)
 
     engine.load(qtc.QUrl.fromLocalFile(constants.MAIN_QML_FILEPATH))
 

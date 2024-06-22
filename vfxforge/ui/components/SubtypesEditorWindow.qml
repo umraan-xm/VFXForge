@@ -248,7 +248,7 @@ Window {
             }
 
             Row {
-                Button {
+                VFButton {
                     id: saveSubtypesButton
 
                     width: 100
