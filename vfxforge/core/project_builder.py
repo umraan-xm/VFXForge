@@ -64,10 +64,10 @@ class ProjectBuilder:
     def matches(self, name: str, path: str) -> bool:
         return self.path == os.path.join(path, name)
 
-    def build_project(self, project_type: str):
+    def build_project(self):
         self._create_directory(self.path)
 
-        base_dirs = self.settings.get_project_base_dirs(project_type=project_type)
+        base_dirs = self.settings.get_project_base_dirs(project_type=self.project_type)
         
         for directory in base_dirs:
             self._create_directory(os.path.join(self.path, directory))

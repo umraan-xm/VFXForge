@@ -44,7 +44,7 @@ class Backend(qtc.QObject):
         if not self.project_builder or not self.project_builder.matches(name=project_name, path=project_path):
             self.project_builder = ProjectBuilder(name=project_name, path=project_path, project_type=project_type, settings=self.settings)
 
-            self.project_builder.build_project(project_type=project_type)
+            self.project_builder.build_project()
         
         if assets:
             logger.info(f"Project contains {len(assets)} assets.")
