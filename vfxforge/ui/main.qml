@@ -12,7 +12,7 @@ import "./components"
 ApplicationWindow {
     id: root
     visible: true
-    width: 1280
+    width: 650
     height: 720
 
     readonly property int margin: 15
@@ -175,20 +175,17 @@ ApplicationWindow {
             Layout.fillWidth: true
 
             VFTabButton {
-                
-
                 text: qsTr("Assets")
             }
 
             VFTabButton {
-                
-
                 text: qsTr("Sequences")
             }
         }
 
         StackLayout {
             Layout.minimumWidth: assetsColumnLayout.implicitWidth + 20
+            Layout.minimumHeight: 200
             Layout.margins: 10
 
             currentIndex: mainTabBar.currentIndex
@@ -307,14 +304,12 @@ ApplicationWindow {
 
                             clip: true
 
-                            // ScrollBar.vertical.interactive: true
-
                             ListView {
                                 id: assetListView
                                 model: assetListModel
                         
                                 delegate: Rectangle {
-                                   
+                                   id: assetdelegateRectangle
                                     height: 150
                                     width: contentItem.width
                                     
@@ -656,10 +651,6 @@ ApplicationWindow {
                                                 }
                                             }
                                         }
-
-                                        
-
-                                        
                                     }
                                 }
                             }
